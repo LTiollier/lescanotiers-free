@@ -47,7 +47,7 @@ export function CycleForm({ open, onClose, onSubmit, cycle, isLoading }: CycleFo
       setStartsAt('');
       setEndsAt('');
     }
-  }, [cycle, open]);
+  }, [cycle]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

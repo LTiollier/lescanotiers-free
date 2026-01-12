@@ -5,7 +5,7 @@ import { createImageGenerationOptions } from '../config/ai-prompts';
 /**
  * State of the AI image generation process
  */
-export type AIImageGenerationState = 'idle' | 'generating' | 'success' | 'error';
+export type AIImageGenerationState = 'idle' | 'generating' | 'success' | 'error' | 'quota_exceeded';
 
 /**
  * Result of the AI image generation
@@ -14,6 +14,7 @@ export interface AIImageGenerationResult {
   imageElement: HTMLImageElement | null;
   imageUrl: string | null;
   error: string | null;
+  isQuotaExceeded?: boolean;
 }
 
 /**
@@ -32,6 +33,7 @@ export function useAIImageGeneration() {
     imageElement: null,
     imageUrl: null,
     error: null,
+    isQuotaExceeded: false,
   });
 
   /**
@@ -55,6 +57,7 @@ export function useAIImageGeneration() {
       imageElement: null,
       imageUrl: null,
       error: null,
+      isQuotaExceeded: false,
     });
 
     try {
@@ -79,6 +82,7 @@ export function useAIImageGeneration() {
         imageElement,
         imageUrl,
         error: null,
+        isQuotaExceeded: false,
       });
       setState('success');
 
@@ -86,17 +90,28 @@ export function useAIImageGeneration() {
     } catch (error) {
       console.error('Error generating image with AI:', error);
 
-      const errorMessage =
-        error instanceof Error
+      // Check if error is related to quota/credits
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      const isQuotaError =
+        errorMessage.toLowerCase().includes('quota') ||
+        errorMessage.toLowerCase().includes('credit') ||
+        errorMessage.toLowerCase().includes('limit') ||
+        errorMessage.toLowerCase().includes('exceeded') ||
+        errorMessage.toLowerCase().includes('insufficient');
+
+      const displayMessage = isQuotaError
+        ? 'Crédits Puter.js insuffisants. Veuillez contacter support@puter.com pour augmenter votre quota.'
+        : error instanceof Error
           ? error.message
           : "Une erreur s'est produite lors de la génération de l'image";
 
       setResult({
         imageElement: null,
         imageUrl: null,
-        error: errorMessage,
+        error: displayMessage,
+        isQuotaExceeded: isQuotaError,
       });
-      setState('error');
+      setState(isQuotaError ? 'quota_exceeded' : 'error');
     }
   }, []); // No dependencies - this function is stable
 
@@ -157,6 +172,7 @@ export function useAIImageGeneration() {
       imageElement: null,
       imageUrl: null,
       error: null,
+      isQuotaExceeded: false,
     });
   }, []); // No dependencies - this function is stable
 
@@ -193,5 +209,6 @@ export function useAIImageGeneration() {
     isSuccess: state === 'success',
     isError: state === 'error',
     isIdle: state === 'idle',
+    isQuotaExceeded: state === 'quota_exceeded',
   };
 }

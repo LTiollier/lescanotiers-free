@@ -19,7 +19,7 @@ interface AIImageGenerationDialogProps {
   open: boolean;
   onClose: () => void;
   vegetableName: string;
-  onImageGenerated: (imageFile: File) => void;
+  onImageGenerated: (imageFile: File, quotaExceeded?: boolean) => void;
 }
 
 /**
@@ -37,8 +37,16 @@ export function AIImageGenerationDialog({
   vegetableName,
   onImageGenerated,
 }: AIImageGenerationDialogProps) {
-  const { result, generateImage, convertToFile, reset, isGenerating, isSuccess, isError } =
-    useAIImageGeneration();
+  const {
+    result,
+    generateImage,
+    convertToFile,
+    reset,
+    isGenerating,
+    isSuccess,
+    isError,
+    isQuotaExceeded,
+  } = useAIImageGeneration();
 
   // Generate image when dialog opens
   useEffect(() => {
@@ -64,7 +72,7 @@ export function AIImageGenerationDialog({
     const file = await convertToFile(fileName);
 
     if (file) {
-      onImageGenerated(file);
+      onImageGenerated(file, result.isQuotaExceeded);
       onClose();
     } else {
       // Show error if conversion failed
@@ -143,10 +151,10 @@ export function AIImageGenerationDialog({
             </Box>
           )}
 
-          {isError && (
-            <Alert severity="error">
+          {(isError || isQuotaExceeded) && (
+            <Alert severity={isQuotaExceeded ? 'warning' : 'error'}>
               <Typography variant="body2" fontWeight="medium" gutterBottom>
-                Erreur lors de la génération
+                {isQuotaExceeded ? 'Quota de crédits insuffisant' : 'Erreur lors de la génération'}
               </Typography>
               <Typography variant="body2">{result.error}</Typography>
             </Alert>
@@ -194,7 +202,7 @@ export function AIImageGenerationDialog({
           Annuler
         </Button>
 
-        {isError && (
+        {isError && !isQuotaExceeded && (
           <Button
             onClick={handleRegenerate}
             startIcon={<Refresh />}

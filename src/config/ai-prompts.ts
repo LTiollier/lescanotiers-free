@@ -24,7 +24,7 @@ export const AI_IMAGE_CONFIG = {
    * Model to use for image generation
    * Options: 'gpt-image-1', 'gpt-image-1.5', 'stabilityai/stable-diffusion-3-medium'
    */
-  model: 'gpt-image-1',
+  model: 'stabilityai/stable-diffusion-3-medium',
 
   /**
    * Image dimensions (only supported by some models)

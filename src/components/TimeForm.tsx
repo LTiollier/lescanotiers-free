@@ -62,7 +62,7 @@ export function TimeForm({ open, onClose, onSubmit, time, isLoading }: TimeFormP
       setMinutes('');
       setQuantity('');
     }
-  }, [time, open]);
+  }, [time]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

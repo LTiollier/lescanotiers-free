@@ -51,6 +51,7 @@ export function VegetableForm({
   const [shouldDeleteImage, setShouldDeleteImage] = useState(false);
   const [imageError, setImageError] = useState<string | null>(null);
   const [aiDialogOpen, setAiDialogOpen] = useState(false);
+  const [aiQuotaExceeded, setAiQuotaExceeded] = useState(false);
   const { data: categories, isLoading: categoriesLoading } = useVegetableCategories();
 
   useEffect(() => {
@@ -66,7 +67,8 @@ export function VegetableForm({
     setImageFile(null);
     setShouldDeleteImage(false);
     setImageError(null);
-  }, [vegetable, open]);
+    // Don't reset aiQuotaExceeded here - it should persist across form opens
+  }, [vegetable]);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -113,7 +115,12 @@ export function VegetableForm({
     setAiDialogOpen(false);
   };
 
-  const handleAIImageGenerated = (file: File) => {
+  const handleAIImageGenerated = (file: File, quotaExceeded?: boolean) => {
+    // Track quota status to disable button if needed
+    if (quotaExceeded) {
+      setAiQuotaExceeded(true);
+    }
+
     // Handle the AI-generated image the same way as a manually uploaded file
     setImageFile(file);
     setShouldDeleteImage(false);
@@ -236,8 +243,15 @@ export function VegetableForm({
                 color="secondary"
                 startIcon={<AutoAwesome />}
                 onClick={handleOpenAIDialog}
-                disabled={isLoading || !name.trim()}
+                disabled={isLoading || !name.trim() || aiQuotaExceeded}
                 sx={{ flex: 1 }}
+                title={
+                  aiQuotaExceeded
+                    ? 'Crédits Puter.js insuffisants'
+                    : !name.trim()
+                      ? 'Saisissez un nom de légume'
+                      : 'Générer une image avec IA'
+                }
               >
                 Générer avec IA
               </Button>
@@ -249,9 +263,16 @@ export function VegetableForm({
               </Alert>
             )}
 
+            {aiQuotaExceeded && (
+              <Alert severity="warning" sx={{ mt: 1 }}>
+                Crédits Puter.js insuffisants. Veuillez contacter support@puter.com pour augmenter
+                votre quota.
+              </Alert>
+            )}
+
             <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 1 }}>
               Formats acceptés: JPEG, PNG, WebP. Taille max: 2 MB.
-              {name.trim() && (
+              {name.trim() && !aiQuotaExceeded && (
                 <>
                   <br />💡 Utilisez le bouton "Générer avec IA" pour créer une image
                   automatiquement.
