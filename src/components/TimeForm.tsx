@@ -49,20 +49,22 @@ export function TimeForm({ open, onClose, onSubmit, time, isLoading }: TimeFormP
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
   useEffect(() => {
-    if (time) {
-      setCycleId(time.cycle_id);
-      setActivityId(time.activity_id);
-      setDate(time.date);
-      setMinutes(time.minutes);
-      setQuantity(time.quantity || '');
-    } else {
-      setCycleId('');
-      setActivityId('');
-      setDate('');
-      setMinutes('');
-      setQuantity('');
+    if (open) {
+      if (time) {
+        setCycleId(time.cycle_id);
+        setActivityId(time.activity_id);
+        setDate(time.date);
+        setMinutes(time.minutes);
+        setQuantity(time.quantity || '');
+      } else {
+        setCycleId('');
+        setActivityId('');
+        setDate('');
+        setMinutes('');
+        setQuantity('');
+      }
     }
-  }, [time]);
+  }, [time, open]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

@@ -23,12 +23,14 @@ export function ActivityForm({ open, onClose, onSubmit, activity, isLoading }: A
   const [name, setName] = useState('');
 
   useEffect(() => {
-    if (activity) {
-      setName(activity.name);
-    } else {
-      setName('');
+    if (open) {
+      if (activity) {
+        setName(activity.name);
+      } else {
+        setName('');
+      }
     }
-  }, [activity]);
+  }, [activity, open]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

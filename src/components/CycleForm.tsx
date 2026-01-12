@@ -36,18 +36,20 @@ export function CycleForm({ open, onClose, onSubmit, cycle, isLoading }: CycleFo
   const { data: parcels, isLoading: parcelsLoading } = useParcels();
 
   useEffect(() => {
-    if (cycle) {
-      setVegetableId(cycle.vegetable_id);
-      setParcelId(cycle.parcel_id);
-      setStartsAt(cycle.starts_at);
-      setEndsAt(cycle.ends_at);
-    } else {
-      setVegetableId('');
-      setParcelId('');
-      setStartsAt('');
-      setEndsAt('');
+    if (open) {
+      if (cycle) {
+        setVegetableId(cycle.vegetable_id);
+        setParcelId(cycle.parcel_id);
+        setStartsAt(cycle.starts_at);
+        setEndsAt(cycle.ends_at);
+      } else {
+        setVegetableId('');
+        setParcelId('');
+        setStartsAt('');
+        setEndsAt('');
+      }
     }
-  }, [cycle]);
+  }, [cycle, open]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

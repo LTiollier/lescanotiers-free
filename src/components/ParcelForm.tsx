@@ -23,12 +23,14 @@ export function ParcelForm({ open, onClose, onSubmit, parcel, isLoading }: Parce
   const [name, setName] = useState('');
 
   useEffect(() => {
-    if (parcel) {
-      setName(parcel.name);
-    } else {
-      setName('');
+    if (open) {
+      if (parcel) {
+        setName(parcel.name);
+      } else {
+        setName('');
+      }
     }
-  }, [parcel]);
+  }, [parcel, open]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

@@ -55,20 +55,22 @@ export function VegetableForm({
   const { data: categories, isLoading: categoriesLoading } = useVegetableCategories();
 
   useEffect(() => {
-    if (vegetable) {
-      setName(vegetable.name);
-      setCategoryId(vegetable.category_id);
-      setImagePreview(vegetable.image_url);
-    } else {
-      setName('');
-      setCategoryId(null);
-      setImagePreview(null);
+    if (open) {
+      if (vegetable) {
+        setName(vegetable.name);
+        setCategoryId(vegetable.category_id);
+        setImagePreview(vegetable.image_url);
+      } else {
+        setName('');
+        setCategoryId(null);
+        setImagePreview(null);
+      }
+      setImageFile(null);
+      setShouldDeleteImage(false);
+      setImageError(null);
+      // Don't reset aiQuotaExceeded here - it should persist across form opens
     }
-    setImageFile(null);
-    setShouldDeleteImage(false);
-    setImageError(null);
-    // Don't reset aiQuotaExceeded here - it should persist across form opens
-  }, [vegetable]);
+  }, [vegetable, open]);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
