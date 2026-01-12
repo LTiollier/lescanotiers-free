@@ -1,5 +1,5 @@
 import puter from '@heyputer/puter.js';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { createImageGenerationOptions } from '../config/ai-prompts';
 
 /**
@@ -39,7 +39,7 @@ export function useAIImageGeneration() {
    * @param vegetableName - Name of the vegetable (in French or English)
    * @returns Promise that resolves when generation is complete
    */
-  const generateImage = async (vegetableName: string): Promise<void> => {
+  const generateImage = useCallback(async (vegetableName: string): Promise<void> => {
     if (!vegetableName.trim()) {
       setResult({
         imageElement: null,
@@ -98,7 +98,7 @@ export function useAIImageGeneration() {
       });
       setState('error');
     }
-  };
+  }, []); // No dependencies - this function is stable
 
   /**
    * Converts the generated HTMLImageElement to a File object
@@ -151,14 +151,14 @@ export function useAIImageGeneration() {
   /**
    * Resets the hook state to initial values
    */
-  const reset = () => {
+  const reset = useCallback(() => {
     setState('idle');
     setResult({
       imageElement: null,
       imageUrl: null,
       error: null,
     });
-  };
+  }, []); // No dependencies - this function is stable
 
   return {
     /**

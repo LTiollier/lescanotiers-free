@@ -1,3 +1,28 @@
+project-orchestrator - 2026-01-12 22:24:53 - Fix infinite loop in AI image generation
+
+Problème identifié:
+- Boucle infinie d'appels HTTP dans AIImageGenerationDialog.tsx
+- Cause: useEffect avec dépendances `reset` et `generateImage` qui se recréent à chaque render
+- Les fonctions n'étaient pas mémorisées avec useCallback dans le hook useAIImageGeneration
+
+Correction appliquée:
+- Import de useCallback dans src/hooks/useAIImageGeneration.ts
+- Wrapping de generateImage() avec useCallback(async () => {...}, [])
+- Wrapping de reset() avec useCallback(() => {...}, [])
+- Stabilisation des références de fonctions pour éviter les re-renders
+
+Impact:
+✓ L'API Puter.js n'est appelée qu'une seule fois lors de l'ouverture du dialog
+✓ Plus de boucle infinie dans la console réseau
+✓ Performance améliorée
+✓ Comportement prévisible et stable
+
+Fichiers modifiés:
+- src/hooks/useAIImageGeneration.ts
+
+---
+
+HISTORIQUE PRÉCÉDENT:
 project-orchestrator - 2026-01-12 22:16:13 - Puter.js AI Image Generation Integration
 
 Travail effectué:
