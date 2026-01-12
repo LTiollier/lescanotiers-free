@@ -6,6 +6,7 @@ import {
   LocalFlorist,
   Logout,
   Menu as MenuIcon,
+  People,
   Settings,
   Spa,
   Terrain,
@@ -49,6 +50,7 @@ const menuItems: NavMenuItem[] = [
   { text: 'Cycles', icon: <Autorenew />, path: '/cycles', adminOnly: true },
   { text: 'Activités', icon: <Assignment />, path: '/activities', adminOnly: true },
   { text: 'Temps passés', icon: <Timer />, path: '/times' },
+  { text: 'Utilisateurs', icon: <People />, path: '/users', adminOnly: true },
 ];
 
 export function AppLayout() {

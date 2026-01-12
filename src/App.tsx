@@ -9,8 +9,8 @@ import { Dashboard } from './pages/Dashboard';
 import { Forbidden } from './pages/Forbidden';
 import { Login } from './pages/Login';
 import { Parcels } from './pages/Parcels';
-import { Signup } from './pages/Signup';
 import { Times } from './pages/Times';
+import { UserManagement } from './pages/UserManagement';
 import { Vegetables } from './pages/Vegetables';
 
 function App() {
@@ -21,7 +21,6 @@ function App() {
     return (
       <Routes>
         <Route path="/login" element={<Navigate to="/" replace />} />
-        <Route path="/signup" element={<Navigate to="/" replace />} />
         <Route path="/403" element={<Forbidden />} />
         <Route element={<ProtectedRoute />}>
           <Route element={<AppLayout />}>
@@ -38,6 +37,14 @@ function App() {
               }
             />
             <Route path="/times" element={<Times />} />
+            <Route
+              path="/users"
+              element={
+                <RoleBasedRoute requiredRole="admin">
+                  <UserManagement />
+                </RoleBasedRoute>
+              }
+            />
           </Route>
         </Route>
         <Route path="*" element={<Navigate to="/" replace />} />
@@ -48,7 +55,6 @@ function App() {
   return (
     <Routes>
       <Route path="/login" element={<Login />} />
-      <Route path="/signup" element={<Signup />} />
       <Route path="/403" element={<Forbidden />} />
       <Route element={<ProtectedRoute />}>
         <Route element={<AppLayout />}>
@@ -65,6 +71,14 @@ function App() {
             }
           />
           <Route path="/times" element={<Times />} />
+          <Route
+            path="/users"
+            element={
+              <RoleBasedRoute requiredRole="admin">
+                <UserManagement />
+              </RoleBasedRoute>
+            }
+          />
         </Route>
       </Route>
       <Route path="*" element={<Navigate to="/login" replace />} />

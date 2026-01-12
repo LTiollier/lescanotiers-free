@@ -10,7 +10,7 @@ import {
   Typography,
 } from '@mui/material';
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 
 export function Login() {
@@ -96,17 +96,10 @@ export function Login() {
                 variant="contained"
                 size="large"
                 disabled={isLoading}
-                sx={{ mt: 3, mb: 2 }}
+                sx={{ mt: 3 }}
               >
                 {isLoading ? 'Connexion...' : 'Se connecter'}
               </Button>
-
-              <Typography variant="body2" align="center">
-                Pas encore de compte ?{' '}
-                <Link to="/signup" style={{ color: 'inherit' }}>
-                  <strong>Créer un compte</strong>
-                </Link>
-              </Typography>
             </Box>
           </CardContent>
         </Card>

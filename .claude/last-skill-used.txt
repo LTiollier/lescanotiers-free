@@ -1,1 +1,1 @@
-project-orchestrator - 2026-01-12 17:35:00 - Configuration du déploiement Vercel
+project-orchestrator - 2026-01-12 17:48:41 - Restriction de la creation de comptes aux administrateurs uniquement
