@@ -1,2 +1,2 @@
-project-orchestrator - 2026-01-12 17:30:15
-Implemented activities management (CRUD) with admin-only access control.
+project-orchestrator - 2026-01-12 17:22:24
+Implemented CI/CD with GitHub Actions (linting, testing, building).
