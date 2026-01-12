@@ -99,12 +99,7 @@ export function TimeForm({ open, onClose, onSubmit, time, isLoading }: TimeFormP
             </Select>
           </FormControl>
 
-          <FormControl
-            fullWidth
-            margin="dense"
-            required
-            disabled={isLoading || activitiesLoading}
-          >
+          <FormControl fullWidth margin="dense" required disabled={isLoading || activitiesLoading}>
             <InputLabel>Activité</InputLabel>
             <Select
               value={activityId}

@@ -205,11 +205,7 @@ export function Times() {
                         </Box>
                       </TableCell>
                       <TableCell>
-                        <Chip
-                          label={time.activities?.name || 'N/A'}
-                          size="small"
-                          color="primary"
-                        />
+                        <Chip label={time.activities?.name || 'N/A'} size="small" color="primary" />
                       </TableCell>
                       <TableCell>
                         <Chip label={formatDuration(time.minutes)} size="small" />
@@ -224,7 +220,11 @@ export function Times() {
                       <TableCell align="right">
                         {canEditTime(time) && (
                           <>
-                            <IconButton size="small" onClick={() => handleEdit(time)} color="primary">
+                            <IconButton
+                              size="small"
+                              onClick={() => handleEdit(time)}
+                              color="primary"
+                            >
                               <EditIcon />
                             </IconButton>
                             {isAdmin && (
