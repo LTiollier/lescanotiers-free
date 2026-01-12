@@ -40,7 +40,7 @@ export function ActivityForm({ open, onClose, onSubmit, activity, isLoading }: A
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
       <form onSubmit={handleSubmit}>
-        <DialogTitle>{activity ? 'Modifier l\'activité' : 'Nouvelle activité'}</DialogTitle>
+        <DialogTitle>{activity ? "Modifier l'activité" : 'Nouvelle activité'}</DialogTitle>
         <DialogContent>
           <TextField
             autoFocus

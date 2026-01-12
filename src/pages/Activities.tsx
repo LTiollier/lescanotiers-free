@@ -19,7 +19,12 @@ import {
 import { useState } from 'react';
 import { ActivityForm } from '../components/ActivityForm';
 import { ConfirmDialog } from '../components/ConfirmDialog';
-import { useActivities, useCreateActivity, useDeleteActivity, useUpdateActivity } from '../hooks/useActivities';
+import {
+  useActivities,
+  useCreateActivity,
+  useDeleteActivity,
+  useUpdateActivity,
+} from '../hooks/useActivities';
 import { useIsAdmin } from '../hooks/useUserProfile';
 import type { Database } from '../types/database.types';
 
