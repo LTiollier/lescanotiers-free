@@ -1,4 +1,4 @@
-import { Box, Card, CardContent, Grid, Typography } from '@mui/material';
+import { Box, Card, CardContent, Stack, Typography } from '@mui/material';
 import { useAuth } from '../contexts/AuthContext';
 import { useUserProfile } from '../hooks/useUserProfile';
 
@@ -12,8 +12,8 @@ export function Dashboard() {
         Tableau de bord
       </Typography>
 
-      <Grid container spacing={3}>
-        <Grid item xs={12} md={6}>
+      <Stack spacing={3} direction={{ xs: 'column', md: 'row' }}>
+        <Box sx={{ flex: 1 }}>
           <Card>
             <CardContent>
               <Typography variant="h6" gutterBottom>
@@ -28,9 +28,9 @@ export function Dashboard() {
               </Typography>
             </CardContent>
           </Card>
-        </Grid>
+        </Box>
 
-        <Grid item xs={12} md={6}>
+        <Box sx={{ flex: 1 }}>
           <Card>
             <CardContent>
               <Typography variant="h6" gutterBottom>
@@ -41,8 +41,8 @@ export function Dashboard() {
               </Typography>
             </CardContent>
           </Card>
-        </Grid>
-      </Grid>
+        </Box>
+      </Stack>
     </Box>
   );
 }

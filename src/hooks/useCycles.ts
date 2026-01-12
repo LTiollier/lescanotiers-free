@@ -37,7 +37,11 @@ export function useCreateCycle() {
 
   return useMutation({
     mutationFn: async (cycle: CycleInsert) => {
-      const { data, error } = await supabase.from('cycles').insert(cycle).select().single();
+      const { data, error } = await supabase
+        .from('cycles')
+        .insert(cycle as never)
+        .select()
+        .single();
 
       if (error) throw error;
       return data;
@@ -58,7 +62,7 @@ export function useUpdateCycle() {
     mutationFn: async ({ id, updates }: { id: number; updates: CycleUpdate }) => {
       const { data, error } = await supabase
         .from('cycles')
-        .update(updates)
+        .update(updates as never)
         .eq('id', id)
         .select()
         .single();

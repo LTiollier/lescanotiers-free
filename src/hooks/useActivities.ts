@@ -32,7 +32,11 @@ export function useCreateActivity() {
 
   return useMutation({
     mutationFn: async (activity: ActivityInsert) => {
-      const { data, error } = await supabase.from('activities').insert(activity).select().single();
+      const { data, error } = await supabase
+        .from('activities')
+        .insert(activity as never)
+        .select()
+        .single();
 
       if (error) throw error;
       return data;
@@ -53,7 +57,7 @@ export function useUpdateActivity() {
     mutationFn: async ({ id, updates }: { id: number; updates: ActivityUpdate }) => {
       const { data, error } = await supabase
         .from('activities')
-        .update(updates)
+        .update(updates as never)
         .eq('id', id)
         .select()
         .single();

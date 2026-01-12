@@ -32,7 +32,11 @@ export function useCreateVegetable() {
 
   return useMutation({
     mutationFn: async (vegetable: VegetableInsert) => {
-      const { data, error } = await supabase.from('vegetables').insert(vegetable).select().single();
+      const { data, error } = await supabase
+        .from('vegetables')
+        .insert(vegetable as never)
+        .select()
+        .single();
 
       if (error) throw error;
       return data;
@@ -53,7 +57,7 @@ export function useUpdateVegetable() {
     mutationFn: async ({ id, updates }: { id: number; updates: VegetableUpdate }) => {
       const { data, error } = await supabase
         .from('vegetables')
-        .update(updates)
+        .update(updates as never)
         .eq('id', id)
         .select()
         .single();

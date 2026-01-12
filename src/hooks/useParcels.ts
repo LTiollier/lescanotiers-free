@@ -32,7 +32,11 @@ export function useCreateParcel() {
 
   return useMutation({
     mutationFn: async (parcel: ParcelInsert) => {
-      const { data, error } = await supabase.from('parcels').insert(parcel).select().single();
+      const { data, error } = await supabase
+        .from('parcels')
+        .insert(parcel as never)
+        .select()
+        .single();
 
       if (error) throw error;
       return data;
@@ -53,7 +57,7 @@ export function useUpdateParcel() {
     mutationFn: async ({ id, updates }: { id: number; updates: ParcelUpdate }) => {
       const { data, error } = await supabase
         .from('parcels')
-        .update(updates)
+        .update(updates as never)
         .eq('id', id)
         .select()
         .single();

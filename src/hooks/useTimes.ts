@@ -49,7 +49,11 @@ export function useCreateTime() {
 
   return useMutation({
     mutationFn: async (time: TimeInsert) => {
-      const { data, error } = await supabase.from('times').insert(time).select().single();
+      const { data, error } = await supabase
+        .from('times')
+        .insert(time as never)
+        .select()
+        .single();
 
       if (error) throw error;
       return data;
@@ -70,7 +74,7 @@ export function useUpdateTime() {
     mutationFn: async ({ id, updates }: { id: number; updates: TimeUpdate }) => {
       const { data, error } = await supabase
         .from('times')
-        .update(updates)
+        .update(updates as never)
         .eq('id', id)
         .select()
         .single();
