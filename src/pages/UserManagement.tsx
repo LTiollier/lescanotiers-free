@@ -10,6 +10,7 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  Fab,
   FormControl,
   IconButton,
   InputLabel,
@@ -17,6 +18,7 @@ import {
   Paper,
   Select,
   Snackbar,
+  Stack,
   Table,
   TableBody,
   TableCell,
@@ -25,8 +27,11 @@ import {
   TableRow,
   TextField,
   Typography,
+  useMediaQuery,
+  useTheme,
 } from '@mui/material';
 import { useState } from 'react';
+import { MobileCard } from '../components/MobileCard';
 import { useAuth } from '../contexts/AuthContext';
 import { useCreateUser, useUpdateUserRole, useUsers } from '../hooks/useUsers';
 import type { Database } from '../types/database.types';
@@ -38,6 +43,8 @@ export function UserManagement() {
   const { data: users, isLoading, error } = useUsers();
   const createUser = useCreateUser();
   const updateUserRole = useUpdateUserRole();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
   const [formOpen, setFormOpen] = useState(false);
   const [roleDialogOpen, setRoleDialogOpen] = useState(false);
@@ -143,16 +150,85 @@ export function UserManagement() {
 
   return (
     <Box>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-        <Typography variant="h4">Gestion des Utilisateurs</Typography>
-        <Button variant="contained" startIcon={<AddIcon />} onClick={handleAdd}>
-          Créer un utilisateur
-        </Button>
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          mb: 3,
+          flexWrap: 'wrap',
+          gap: 2,
+        }}
+      >
+        <Typography variant={isMobile ? 'h5' : 'h4'}>Gestion des Utilisateurs</Typography>
+        {!isMobile && (
+          <Button variant="contained" startIcon={<AddIcon />} onClick={handleAdd}>
+            Créer un utilisateur
+          </Button>
+        )}
       </Box>
 
       {isLoading ? (
         <Box sx={{ display: 'flex', justifyContent: 'center', py: 8 }}>
           <CircularProgress />
+        </Box>
+      ) : isMobile ? (
+        <Box>
+          {users?.length === 0 ? (
+            <Card>
+              <Box sx={{ py: 8, textAlign: 'center' }}>
+                <Typography variant="body2" color="text.secondary">
+                  Aucun utilisateur. Appuyez sur + pour commencer.
+                </Typography>
+              </Box>
+            </Card>
+          ) : (
+            users?.map((user) => (
+              <MobileCard
+                key={user.id}
+                fields={[
+                  {
+                    label: 'Email',
+                    value: (
+                      <Stack direction="row" spacing={1} alignItems="center">
+                        {user.id === currentUser?.id && (
+                          <Chip label="Vous" size="small" color="primary" />
+                        )}
+                        <Typography variant="body2">{user.id}</Typography>
+                      </Stack>
+                    ),
+                    emphasized: true,
+                  },
+                  {
+                    label: "Nom d'utilisateur",
+                    value: user.username || '-',
+                  },
+                  {
+                    label: 'Rôle',
+                    value: (
+                      <Chip
+                        label={user.role === 'admin' ? 'Administrateur' : 'Employé'}
+                        color={user.role === 'admin' ? 'primary' : 'default'}
+                        size="small"
+                      />
+                    ),
+                  },
+                  {
+                    label: 'Date de création',
+                    value: new Date(user.created_at).toLocaleDateString('fr-FR'),
+                  },
+                ]}
+                actions={[
+                  {
+                    icon: <EditIcon />,
+                    onClick: () => handleEditRole(user),
+                    color: 'primary',
+                    disabled: user.id === currentUser?.id,
+                  },
+                ]}
+              />
+            ))
+          )}
         </Box>
       ) : (
         <Card>
@@ -215,8 +291,29 @@ export function UserManagement() {
         </Card>
       )}
 
+      {isMobile && (
+        <Fab
+          color="primary"
+          aria-label="Créer un utilisateur"
+          onClick={handleAdd}
+          sx={{
+            position: 'fixed',
+            bottom: 24,
+            right: 24,
+          }}
+        >
+          <AddIcon />
+        </Fab>
+      )}
+
       {/* Create User Dialog */}
-      <Dialog open={formOpen} onClose={() => setFormOpen(false)} maxWidth="sm" fullWidth>
+      <Dialog
+        open={formOpen}
+        onClose={() => setFormOpen(false)}
+        maxWidth="sm"
+        fullWidth
+        fullScreen={isMobile}
+      >
         <form onSubmit={handleFormSubmit}>
           <DialogTitle>Créer un nouvel utilisateur</DialogTitle>
           <DialogContent>
@@ -274,6 +371,7 @@ export function UserManagement() {
         onClose={() => setRoleDialogOpen(false)}
         maxWidth="xs"
         fullWidth
+        fullScreen={isMobile}
       >
         <DialogTitle>Modifier le rôle</DialogTitle>
         <DialogContent>

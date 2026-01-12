@@ -238,8 +238,10 @@ export function AppLayout() {
         component="main"
         sx={{
           flexGrow: 1,
-          p: 3,
+          p: { xs: 2, sm: 2, md: 3 }, // Padding réduit sur mobile
           width: { md: `calc(100% - ${drawerWidth}px)` },
+          // Espace pour le FAB sur mobile
+          pb: { xs: 10, md: 3 },
         }}
       >
         <Toolbar /> {/* Spacer for fixed AppBar */}

@@ -5,6 +5,7 @@ import {
   Button,
   Card,
   CircularProgress,
+  Fab,
   IconButton,
   Paper,
   Snackbar,
@@ -15,10 +16,13 @@ import {
   TableHead,
   TableRow,
   Typography,
+  useMediaQuery,
+  useTheme,
 } from '@mui/material';
 import { useState } from 'react';
 import { ActivityForm } from '../components/ActivityForm';
 import { ConfirmDialog } from '../components/ConfirmDialog';
+import { MobileCard } from '../components/MobileCard';
 import {
   useActivities,
   useCreateActivity,
@@ -36,6 +40,8 @@ export function Activities() {
   const updateActivity = useUpdateActivity();
   const deleteActivity = useDeleteActivity();
   const isAdmin = useIsAdmin();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
   const [formOpen, setFormOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -113,9 +119,18 @@ export function Activities() {
 
   return (
     <Box>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-        <Typography variant="h4">Gestion des Activités</Typography>
-        {isAdmin && (
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          mb: 3,
+          flexWrap: 'wrap',
+          gap: 2,
+        }}
+      >
+        <Typography variant={isMobile ? 'h5' : 'h4'}>Gestion des Activités</Typography>
+        {isAdmin && !isMobile && (
           <Button variant="contained" startIcon={<AddIcon />} onClick={handleAdd}>
             Ajouter une activité
           </Button>
@@ -125,6 +140,51 @@ export function Activities() {
       {isLoading ? (
         <Box sx={{ display: 'flex', justifyContent: 'center', py: 8 }}>
           <CircularProgress />
+        </Box>
+      ) : isMobile ? (
+        <Box>
+          {activities?.length === 0 ? (
+            <Card>
+              <Box sx={{ py: 8, textAlign: 'center' }}>
+                <Typography variant="body2" color="text.secondary">
+                  Aucune activité. Appuyez sur + pour commencer.
+                </Typography>
+              </Box>
+            </Card>
+          ) : (
+            activities?.map((activity) => (
+              <MobileCard
+                key={activity.id}
+                fields={[
+                  {
+                    label: 'Nom',
+                    value: activity.name,
+                    emphasized: true,
+                  },
+                  {
+                    label: 'Date de création',
+                    value: new Date(activity.created_at).toLocaleDateString('fr-FR'),
+                  },
+                ]}
+                actions={
+                  isAdmin
+                    ? [
+                        {
+                          icon: <EditIcon />,
+                          onClick: () => handleEdit(activity),
+                          color: 'primary',
+                        },
+                        {
+                          icon: <DeleteIcon />,
+                          onClick: () => handleDelete(activity),
+                          color: 'error',
+                        },
+                      ]
+                    : undefined
+                }
+              />
+            ))
+          )}
         </Box>
       ) : (
         <Card>
@@ -178,6 +238,21 @@ export function Activities() {
             </Table>
           </TableContainer>
         </Card>
+      )}
+
+      {isMobile && isAdmin && (
+        <Fab
+          color="primary"
+          aria-label="Ajouter une activité"
+          onClick={handleAdd}
+          sx={{
+            position: 'fixed',
+            bottom: 24,
+            right: 24,
+          }}
+        >
+          <AddIcon />
+        </Fab>
       )}
 
       <ActivityForm

@@ -6,6 +6,7 @@ import {
   Card,
   Chip,
   CircularProgress,
+  Fab,
   IconButton,
   Paper,
   Snackbar,
@@ -16,10 +17,13 @@ import {
   TableHead,
   TableRow,
   Typography,
+  useMediaQuery,
+  useTheme,
 } from '@mui/material';
 import { useState } from 'react';
 import { ConfirmDialog } from '../components/ConfirmDialog';
 import { CycleForm } from '../components/CycleForm';
+import { MobileCard } from '../components/MobileCard';
 import type { CycleWithRelations } from '../hooks/useCycles';
 import { useCreateCycle, useCycles, useDeleteCycle, useUpdateCycle } from '../hooks/useCycles';
 import { useIsAdmin } from '../hooks/useUserProfile';
@@ -30,6 +34,8 @@ export function Cycles() {
   const updateCycle = useUpdateCycle();
   const deleteCycle = useDeleteCycle();
   const isAdmin = useIsAdmin();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
   const [formOpen, setFormOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -125,9 +131,18 @@ export function Cycles() {
 
   return (
     <Box>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-        <Typography variant="h4">Gestion des Cycles</Typography>
-        {isAdmin && (
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          mb: 3,
+          flexWrap: 'wrap',
+          gap: 2,
+        }}
+      >
+        <Typography variant={isMobile ? 'h5' : 'h4'}>Gestion des Cycles</Typography>
+        {isAdmin && !isMobile && (
           <Button variant="contained" startIcon={<AddIcon />} onClick={handleAdd}>
             Ajouter un cycle
           </Button>
@@ -138,7 +153,91 @@ export function Cycles() {
         <Box sx={{ display: 'flex', justifyContent: 'center', py: 8 }}>
           <CircularProgress />
         </Box>
+      ) : isMobile ? (
+        // Vue Mobile avec Cards
+        <Box>
+          {cycles?.length === 0 ? (
+            <Card>
+              <Box sx={{ py: 8, textAlign: 'center' }}>
+                <Typography variant="body2" color="text.secondary">
+                  Aucun cycle. Appuyez sur + pour commencer.
+                </Typography>
+              </Box>
+            </Card>
+          ) : (
+            cycles?.map((cycle) => {
+              const today = new Date();
+              const startsAt = new Date(cycle.starts_at);
+              const endsAt = new Date(cycle.ends_at);
+              const isActive = today >= startsAt && today <= endsAt;
+              const isUpcoming = today < startsAt;
+
+              let statusChip: React.ReactNode;
+              if (isActive) {
+                statusChip = <Chip label="En cours" size="small" color="success" />;
+              } else if (isUpcoming) {
+                statusChip = <Chip label="À venir" size="small" color="info" />;
+              } else {
+                statusChip = <Chip label="Terminé" size="small" color="default" />;
+              }
+
+              return (
+                <MobileCard
+                  key={cycle.id}
+                  fields={[
+                    {
+                      label: 'Légume',
+                      value: (
+                        <Chip
+                          label={cycle.vegetables?.name || 'N/A'}
+                          size="small"
+                          color="success"
+                        />
+                      ),
+                      emphasized: true,
+                    },
+                    {
+                      label: 'Parcelle',
+                      value: (
+                        <Chip label={cycle.parcels?.name || 'N/A'} size="small" color="default" />
+                      ),
+                    },
+                    {
+                      label: 'Date de début',
+                      value: new Date(cycle.starts_at).toLocaleDateString('fr-FR'),
+                    },
+                    {
+                      label: 'Date de fin',
+                      value: new Date(cycle.ends_at).toLocaleDateString('fr-FR'),
+                    },
+                    {
+                      label: 'Statut',
+                      value: statusChip,
+                    },
+                  ]}
+                  actions={
+                    isAdmin
+                      ? [
+                          {
+                            icon: <EditIcon />,
+                            onClick: () => handleEdit(cycle),
+                            color: 'primary',
+                          },
+                          {
+                            icon: <DeleteIcon />,
+                            onClick: () => handleDelete(cycle),
+                            color: 'error',
+                          },
+                        ]
+                      : undefined
+                  }
+                />
+              );
+            })
+          )}
+        </Box>
       ) : (
+        // Vue Desktop avec Table
         <Card>
           <TableContainer component={Paper}>
             <Table>
@@ -217,6 +316,22 @@ export function Cycles() {
             </Table>
           </TableContainer>
         </Card>
+      )}
+
+      {/* FAB pour mobile */}
+      {isMobile && isAdmin && (
+        <Fab
+          color="primary"
+          aria-label="Ajouter un cycle"
+          onClick={handleAdd}
+          sx={{
+            position: 'fixed',
+            bottom: 24,
+            right: 24,
+          }}
+        >
+          <AddIcon />
+        </Fab>
       )}
 
       <CycleForm

@@ -10,6 +10,8 @@ import {
   MenuItem,
   Select,
   TextField,
+  useMediaQuery,
+  useTheme,
 } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useActivities } from '../hooks/useActivities';
@@ -41,6 +43,8 @@ export function TimeForm({ open, onClose, onSubmit, time, isLoading }: TimeFormP
 
   const { data: cycles, isLoading: cyclesLoading } = useCycles();
   const { data: activities, isLoading: activitiesLoading } = useActivities();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
   useEffect(() => {
     if (time) {
@@ -74,7 +78,7 @@ export function TimeForm({ open, onClose, onSubmit, time, isLoading }: TimeFormP
   const isFormValid = cycleId && activityId && date && minutes;
 
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
+    <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth fullScreen={isMobile}>
       <form onSubmit={handleSubmit}>
         <DialogTitle>{time ? 'Modifier le temps passé' : 'Nouveau temps passé'}</DialogTitle>
         <DialogContent>

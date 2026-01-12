@@ -6,9 +6,11 @@ import {
   Card,
   Chip,
   CircularProgress,
+  Fab,
   IconButton,
   Paper,
   Snackbar,
+  Stack,
   Table,
   TableBody,
   TableCell,
@@ -16,9 +18,12 @@ import {
   TableHead,
   TableRow,
   Typography,
+  useMediaQuery,
+  useTheme,
 } from '@mui/material';
 import { useState } from 'react';
 import { ConfirmDialog } from '../components/ConfirmDialog';
+import { MobileCard } from '../components/MobileCard';
 import { TimeForm } from '../components/TimeForm';
 import { useAuth } from '../contexts/AuthContext';
 import type { TimeWithRelations } from '../hooks/useTimes';
@@ -32,6 +37,8 @@ export function Times() {
   const deleteTime = useDeleteTime();
   const isAdmin = useIsAdmin();
   const { user } = useAuth();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
   const [formOpen, setFormOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -146,18 +153,116 @@ export function Times() {
 
   return (
     <Box>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-        <Typography variant="h4">Suivi des Temps Passés</Typography>
-        <Button variant="contained" startIcon={<AddIcon />} onClick={handleAdd}>
-          Ajouter un temps
-        </Button>
+      {/* Header - adapté pour mobile */}
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          mb: 3,
+          flexWrap: 'wrap',
+          gap: 2,
+        }}
+      >
+        <Typography variant={isMobile ? 'h5' : 'h4'}>Suivi des Temps Passés</Typography>
+        {!isMobile && (
+          <Button variant="contained" startIcon={<AddIcon />} onClick={handleAdd}>
+            Ajouter un temps
+          </Button>
+        )}
       </Box>
 
       {isLoading ? (
         <Box sx={{ display: 'flex', justifyContent: 'center', py: 8 }}>
           <CircularProgress />
         </Box>
+      ) : isMobile ? (
+        // Vue Mobile avec Cards
+        <Box>
+          {times?.length === 0 ? (
+            <Card>
+              <Box sx={{ py: 8, textAlign: 'center' }}>
+                <Typography variant="body2" color="text.secondary">
+                  Aucun temps enregistré. Appuyez sur + pour commencer.
+                </Typography>
+              </Box>
+            </Card>
+          ) : (
+            times?.map((time) => (
+              <MobileCard
+                key={time.id}
+                fields={[
+                  {
+                    label: 'Date',
+                    value: new Date(time.date).toLocaleDateString('fr-FR'),
+                    emphasized: true,
+                  },
+                  {
+                    label: 'Utilisateur',
+                    value: (
+                      <Chip label={time.profiles?.username || 'N/A'} size="small" color="default" />
+                    ),
+                  },
+                  {
+                    label: 'Cycle',
+                    value: (
+                      <Stack spacing={0.5}>
+                        <Chip
+                          label={time.cycles?.vegetables?.name || 'N/A'}
+                          size="small"
+                          color="success"
+                        />
+                        <Typography variant="caption" color="text.secondary">
+                          {time.cycles?.parcels?.name || 'N/A'}
+                        </Typography>
+                      </Stack>
+                    ),
+                  },
+                  {
+                    label: 'Activité',
+                    value: (
+                      <Chip label={time.activities?.name || 'N/A'} size="small" color="primary" />
+                    ),
+                  },
+                  {
+                    label: 'Durée',
+                    value: <Chip label={formatDuration(time.minutes)} size="small" />,
+                  },
+                  {
+                    label: 'Quantité',
+                    value: time.quantity ? (
+                      <Chip label={time.quantity} size="small" color="info" />
+                    ) : (
+                      '-'
+                    ),
+                  },
+                ]}
+                actions={
+                  canEditTime(time)
+                    ? [
+                        {
+                          icon: <EditIcon />,
+                          onClick: () => handleEdit(time),
+                          color: 'primary',
+                        },
+                        ...(isAdmin
+                          ? [
+                              {
+                                icon: <DeleteIcon />,
+                                onClick: () => handleDelete(time),
+                                color: 'error' as const,
+                              },
+                            ]
+                          : []),
+                      ]
+                    : undefined
+                }
+              />
+            ))
+          )}
+        </Box>
       ) : (
+        // Vue Desktop avec Table
         <Card>
           <TableContainer component={Paper}>
             <Table>
@@ -246,6 +351,22 @@ export function Times() {
             </Table>
           </TableContainer>
         </Card>
+      )}
+
+      {/* FAB pour mobile */}
+      {isMobile && (
+        <Fab
+          color="primary"
+          aria-label="Ajouter un temps"
+          onClick={handleAdd}
+          sx={{
+            position: 'fixed',
+            bottom: 24,
+            right: 24,
+          }}
+        >
+          <AddIcon />
+        </Fab>
       )}
 
       <TimeForm

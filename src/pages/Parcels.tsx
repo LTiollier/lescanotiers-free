@@ -5,6 +5,7 @@ import {
   Button,
   Card,
   CircularProgress,
+  Fab,
   IconButton,
   Paper,
   Snackbar,
@@ -15,9 +16,12 @@ import {
   TableHead,
   TableRow,
   Typography,
+  useMediaQuery,
+  useTheme,
 } from '@mui/material';
 import { useState } from 'react';
 import { ConfirmDialog } from '../components/ConfirmDialog';
+import { MobileCard } from '../components/MobileCard';
 import { ParcelForm } from '../components/ParcelForm';
 import { useCreateParcel, useDeleteParcel, useParcels, useUpdateParcel } from '../hooks/useParcels';
 import { useIsAdmin } from '../hooks/useUserProfile';
@@ -31,6 +35,8 @@ export function Parcels() {
   const updateParcel = useUpdateParcel();
   const deleteParcel = useDeleteParcel();
   const isAdmin = useIsAdmin();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
   const [formOpen, setFormOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -108,9 +114,18 @@ export function Parcels() {
 
   return (
     <Box>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-        <Typography variant="h4">Gestion des Parcelles</Typography>
-        {isAdmin && (
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          mb: 3,
+          flexWrap: 'wrap',
+          gap: 2,
+        }}
+      >
+        <Typography variant={isMobile ? 'h5' : 'h4'}>Gestion des Parcelles</Typography>
+        {isAdmin && !isMobile && (
           <Button variant="contained" startIcon={<AddIcon />} onClick={handleAdd}>
             Ajouter une parcelle
           </Button>
@@ -120,6 +135,51 @@ export function Parcels() {
       {isLoading ? (
         <Box sx={{ display: 'flex', justifyContent: 'center', py: 8 }}>
           <CircularProgress />
+        </Box>
+      ) : isMobile ? (
+        <Box>
+          {parcels?.length === 0 ? (
+            <Card>
+              <Box sx={{ py: 8, textAlign: 'center' }}>
+                <Typography variant="body2" color="text.secondary">
+                  Aucune parcelle. Appuyez sur + pour commencer.
+                </Typography>
+              </Box>
+            </Card>
+          ) : (
+            parcels?.map((parcel) => (
+              <MobileCard
+                key={parcel.id}
+                fields={[
+                  {
+                    label: 'Nom',
+                    value: parcel.name,
+                    emphasized: true,
+                  },
+                  {
+                    label: 'Date de création',
+                    value: new Date(parcel.created_at).toLocaleDateString('fr-FR'),
+                  },
+                ]}
+                actions={
+                  isAdmin
+                    ? [
+                        {
+                          icon: <EditIcon />,
+                          onClick: () => handleEdit(parcel),
+                          color: 'primary',
+                        },
+                        {
+                          icon: <DeleteIcon />,
+                          onClick: () => handleDelete(parcel),
+                          color: 'error',
+                        },
+                      ]
+                    : undefined
+                }
+              />
+            ))
+          )}
         </Box>
       ) : (
         <Card>
@@ -173,6 +233,21 @@ export function Parcels() {
             </Table>
           </TableContainer>
         </Card>
+      )}
+
+      {isMobile && isAdmin && (
+        <Fab
+          color="primary"
+          aria-label="Ajouter une parcelle"
+          onClick={handleAdd}
+          sx={{
+            position: 'fixed',
+            bottom: 24,
+            right: 24,
+          }}
+        >
+          <AddIcon />
+        </Fab>
       )}
 
       <ParcelForm
