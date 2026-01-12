@@ -20,9 +20,9 @@ import {
 import { useState } from 'react';
 import { ConfirmDialog } from '../components/ConfirmDialog';
 import { CycleForm } from '../components/CycleForm';
+import type { CycleWithRelations } from '../hooks/useCycles';
 import { useCreateCycle, useCycles, useDeleteCycle, useUpdateCycle } from '../hooks/useCycles';
 import { useIsAdmin } from '../hooks/useUserProfile';
-import type { CycleWithRelations } from '../hooks/useCycles';
 
 export function Cycles() {
   const { data: cycles, isLoading, error } = useCycles();
@@ -63,13 +63,18 @@ export function Cycles() {
     vegetableId: number,
     parcelId: number,
     startsAt: string,
-    endsAt: string
+    endsAt: string,
   ) => {
     try {
       if (selectedCycle) {
         await updateCycle.mutateAsync({
           id: selectedCycle.id,
-          updates: { vegetable_id: vegetableId, parcel_id: parcelId, starts_at: startsAt, ends_at: endsAt },
+          updates: {
+            vegetable_id: vegetableId,
+            parcel_id: parcelId,
+            starts_at: startsAt,
+            ends_at: endsAt,
+          },
         });
         setSnackbar({ open: true, message: 'Cycle modifié avec succès', severity: 'success' });
       } else {
@@ -168,12 +173,18 @@ export function Cycles() {
                     return (
                       <TableRow key={cycle.id}>
                         <TableCell>
-                          <Chip label={cycle.vegetables?.name || 'N/A'} size="small" color="success" />
+                          <Chip
+                            label={cycle.vegetables?.name || 'N/A'}
+                            size="small"
+                            color="success"
+                          />
                         </TableCell>
                         <TableCell>
                           <Chip label={cycle.parcels?.name || 'N/A'} size="small" color="default" />
                         </TableCell>
-                        <TableCell>{new Date(cycle.starts_at).toLocaleDateString('fr-FR')}</TableCell>
+                        <TableCell>
+                          {new Date(cycle.starts_at).toLocaleDateString('fr-FR')}
+                        </TableCell>
                         <TableCell>{new Date(cycle.ends_at).toLocaleDateString('fr-FR')}</TableCell>
                         <TableCell>
                           {isActive && <Chip label="En cours" size="small" color="success" />}
@@ -182,10 +193,18 @@ export function Cycles() {
                         </TableCell>
                         {isAdmin && (
                           <TableCell align="right">
-                            <IconButton size="small" onClick={() => handleEdit(cycle)} color="primary">
+                            <IconButton
+                              size="small"
+                              onClick={() => handleEdit(cycle)}
+                              color="primary"
+                            >
                               <EditIcon />
                             </IconButton>
-                            <IconButton size="small" onClick={() => handleDelete(cycle)} color="error">
+                            <IconButton
+                              size="small"
+                              onClick={() => handleDelete(cycle)}
+                              color="error"
+                            >
                               <DeleteIcon />
                             </IconButton>
                           </TableCell>
