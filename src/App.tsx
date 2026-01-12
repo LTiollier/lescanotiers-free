@@ -1,10 +1,12 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { AppLayout } from './components/AppLayout';
 import { ProtectedRoute } from './components/ProtectedRoute';
+import { RoleBasedRoute } from './components/RoleBasedRoute';
 import { useAuth } from './contexts/AuthContext';
 import { Activities } from './pages/Activities';
 import { Cycles } from './pages/Cycles';
 import { Dashboard } from './pages/Dashboard';
+import { Forbidden } from './pages/Forbidden';
 import { Login } from './pages/Login';
 import { Parcels } from './pages/Parcels';
 import { Signup } from './pages/Signup';
@@ -20,13 +22,21 @@ function App() {
       <Routes>
         <Route path="/login" element={<Navigate to="/" replace />} />
         <Route path="/signup" element={<Navigate to="/" replace />} />
+        <Route path="/403" element={<Forbidden />} />
         <Route element={<ProtectedRoute />}>
           <Route element={<AppLayout />}>
             <Route path="/" element={<Dashboard />} />
             <Route path="/parcels" element={<Parcels />} />
             <Route path="/vegetables" element={<Vegetables />} />
             <Route path="/cycles" element={<Cycles />} />
-            <Route path="/activities" element={<Activities />} />
+            <Route
+              path="/activities"
+              element={
+                <RoleBasedRoute requiredRole="admin">
+                  <Activities />
+                </RoleBasedRoute>
+              }
+            />
             <Route path="/times" element={<Times />} />
           </Route>
         </Route>
@@ -39,13 +49,21 @@ function App() {
     <Routes>
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<Signup />} />
+      <Route path="/403" element={<Forbidden />} />
       <Route element={<ProtectedRoute />}>
         <Route element={<AppLayout />}>
           <Route path="/" element={<Dashboard />} />
           <Route path="/parcels" element={<Parcels />} />
           <Route path="/vegetables" element={<Vegetables />} />
           <Route path="/cycles" element={<Cycles />} />
-          <Route path="/activities" element={<Activities />} />
+          <Route
+            path="/activities"
+            element={
+              <RoleBasedRoute requiredRole="admin">
+                <Activities />
+              </RoleBasedRoute>
+            }
+          />
           <Route path="/times" element={<Times />} />
         </Route>
       </Route>
