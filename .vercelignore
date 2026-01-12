@@ -1,0 +1,34 @@
+# Files and directories to ignore during Vercel build
+
+# Tests
+*.test.ts
+*.test.tsx
+*.spec.ts
+*.spec.tsx
+**/__tests__/**
+
+# Development files
+.husky
+.git
+.github
+*.md
+!README.md
+
+# IDE
+.vscode
+.idea
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Documentation (except README)
+CONTRIBUTING.md
+LICENSE
+CHANGELOG.md
+
+# Supabase local files
+supabase/.branches
+supabase/.temp
