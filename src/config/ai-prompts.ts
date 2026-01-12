@@ -9,7 +9,7 @@
  * Base prompt template for vegetable image generation
  * This template ensures consistent, high-quality images suitable for the application
  */
-export const VEGETABLE_IMAGE_PROMPT_TEMPLATE = `High-quality realistic photograph of a fresh {vegetable_name}, centered in frame, close-up view, well-lit natural lighting, white or neutral background, professional food photography style, sharp focus, vibrant natural colors, no text, no watermark`;
+export const VEGETABLE_IMAGE_PROMPT_TEMPLATE = `High-quality realistic photograph of a fresh {vegetable_name}, centered in frame, close-up view, well-lit natural lighting, white or neutral background, professional food photography style, sharp focus, vibrant natural colors, no text, no watermark. If the vegetable naturally grows in clusters (like cherry tomatoes, grapes, berries), show it as a cluster or bunch on the vine for better identification.`;
 
 /**
  * Negative prompt to exclude unwanted elements
@@ -59,6 +59,9 @@ export function generateVegetablePrompt(vegetableName: string): string {
  */
 const VEGETABLE_TRANSLATIONS: Record<string, string> = {
   tomate: 'tomato',
+  'tomate cerise': 'cherry tomato cluster on vine',
+  'tomate cocktail': 'cocktail tomato cluster on vine',
+  'tomate grappe': 'tomato cluster on vine',
   carotte: 'carrot',
   'pomme de terre': 'potato',
   salade: 'lettuce',
@@ -79,6 +82,7 @@ const VEGETABLE_TRANSLATIONS: Record<string, string> = {
   'haricots verts': 'green beans',
   pois: 'pea',
   'petit pois': 'pea',
+  'pois gourmand': 'sugar snap pea',
   maïs: 'corn',
   oignon: 'onion',
   ail: 'garlic',
@@ -95,6 +99,12 @@ const VEGETABLE_TRANSLATIONS: Record<string, string> = {
   endive: 'endive',
   roquette: 'arugula',
   mâche: "lamb's lettuce",
+  raisin: 'grape cluster on vine',
+  'raisin de table': 'table grape cluster on vine',
+  fraise: 'strawberry',
+  framboise: 'raspberry cluster',
+  groseille: 'redcurrant cluster on stem',
+  cassis: 'blackcurrant cluster on stem',
 };
 
 /**
