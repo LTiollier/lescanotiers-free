@@ -1,38 +1,36 @@
-import { Spa } from '@mui/icons-material';
-import { Box, Card, CardContent, Container, Typography } from '@mui/material';
+import { Navigate, Route, Routes } from 'react-router-dom';
+import { ProtectedRoute } from './components/ProtectedRoute';
+import { useAuth } from './contexts/AuthContext';
+import { Dashboard } from './pages/Dashboard';
+import { Login } from './pages/Login';
+import { Signup } from './pages/Signup';
 
 function App() {
-  return (
-    <Container maxWidth="md">
-      <Box
-        sx={{
-          minHeight: '100vh',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: 4,
-        }}
-      >
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-          <Spa sx={{ fontSize: 60, color: 'primary.main' }} />
-          <Typography variant="h1" component="h1" color="primary">
-            Les Canotiers
-          </Typography>
-        </Box>
+  const { user, isLoading } = useAuth();
 
-        <Card sx={{ minWidth: 400 }}>
-          <CardContent>
-            <Typography variant="h5" component="h2" gutterBottom>
-              Hello World 🚣
-            </Typography>
-            <Typography variant="body1" color="text.secondary">
-              Bienvenue sur l'application de gestion de maraîchage
-            </Typography>
-          </CardContent>
-        </Card>
-      </Box>
-    </Container>
+  // Redirect to dashboard if already logged in
+  if (!isLoading && user) {
+    return (
+      <Routes>
+        <Route path="/login" element={<Navigate to="/" replace />} />
+        <Route path="/signup" element={<Navigate to="/" replace />} />
+        <Route element={<ProtectedRoute />}>
+          <Route path="/" element={<Dashboard />} />
+        </Route>
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    );
+  }
+
+  return (
+    <Routes>
+      <Route path="/login" element={<Login />} />
+      <Route path="/signup" element={<Signup />} />
+      <Route element={<ProtectedRoute />}>
+        <Route path="/" element={<Dashboard />} />
+      </Route>
+      <Route path="*" element={<Navigate to="/login" replace />} />
+    </Routes>
   );
 }
 
