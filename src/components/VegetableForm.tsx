@@ -19,7 +19,13 @@ interface VegetableFormProps {
   isLoading?: boolean;
 }
 
-export function VegetableForm({ open, onClose, onSubmit, vegetable, isLoading }: VegetableFormProps) {
+export function VegetableForm({
+  open,
+  onClose,
+  onSubmit,
+  vegetable,
+  isLoading,
+}: VegetableFormProps) {
   const [name, setName] = useState('');
 
   useEffect(() => {

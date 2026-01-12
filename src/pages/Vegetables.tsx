@@ -19,8 +19,13 @@ import {
 import { useState } from 'react';
 import { ConfirmDialog } from '../components/ConfirmDialog';
 import { VegetableForm } from '../components/VegetableForm';
-import { useCreateVegetable, useDeleteVegetable, useVegetables, useUpdateVegetable } from '../hooks/useVegetables';
 import { useIsAdmin } from '../hooks/useUserProfile';
+import {
+  useCreateVegetable,
+  useDeleteVegetable,
+  useUpdateVegetable,
+  useVegetables,
+} from '../hooks/useVegetables';
 import type { Database } from '../types/database.types';
 
 type Vegetable = Database['public']['Tables']['vegetables']['Row'];

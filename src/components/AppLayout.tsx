@@ -43,10 +43,10 @@ interface NavMenuItem {
 }
 
 const menuItems: NavMenuItem[] = [
-  { text: 'Tableau de bord', icon: <DashboardIcon />, path: '/' },
-  { text: 'Parcelles', icon: <Terrain />, path: '/parcels' },
-  { text: 'Légumes', icon: <LocalFlorist />, path: '/vegetables' },
-  { text: 'Cycles', icon: <Autorenew />, path: '/cycles' },
+  { text: 'Tableau de bord', icon: <DashboardIcon />, path: '/', adminOnly: true },
+  { text: 'Parcelles', icon: <Terrain />, path: '/parcels', adminOnly: true },
+  { text: 'Légumes', icon: <LocalFlorist />, path: '/vegetables', adminOnly: true },
+  { text: 'Cycles', icon: <Autorenew />, path: '/cycles', adminOnly: true },
   { text: 'Activités', icon: <Assignment />, path: '/activities', adminOnly: true },
   { text: 'Temps passés', icon: <Timer />, path: '/times' },
 ];
