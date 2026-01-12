@@ -351,4 +351,169 @@ Chaque image est nommée avec l'ID du légume et un timestamp pour éviter les c
 
 ---
 
+## Configuration Puter.js - Génération d'Images par IA
+
+L'application intègre Puter.js pour générer automatiquement des images de légumes en utilisant l'intelligence artificielle. Cette fonctionnalité est **entièrement gratuite** et ne nécessite **aucune clé API**.
+
+### Présentation
+
+Puter.js offre une API d'intelligence artificielle incluant la génération d'images (txt2img). Cette fonctionnalité est utilisée pour :
+- Générer automatiquement des images réalistes de légumes
+- Faciliter la création de fiches légumes sans avoir à chercher des photos
+- Garantir un style visuel cohérent pour toutes les images générées
+
+### Caractéristiques
+
+- **Gratuit** : Aucun coût pour les développeurs, chaque utilisateur couvre sa propre utilisation
+- **Sans configuration** : Aucune clé API requise
+- **Multi-modèles** : Supporte plusieurs modèles d'IA (GPT Image, Stable Diffusion, etc.)
+- **Qualité professionnelle** : Images haute résolution, style photographique réaliste
+
+### Comment Utiliser
+
+Dans l'interface de gestion des légumes :
+
+1. Créez ou modifiez un légume
+2. Saisissez le nom du légume (ex: "Tomate", "Carotte", etc.)
+3. Cliquez sur le bouton **"Générer avec IA"**
+4. L'IA génère automatiquement une image du légume
+5. Vous pouvez :
+   - **Régénérer** : Créer une nouvelle image si le résultat ne convient pas
+   - **Utiliser cette image** : Valider et uploader l'image vers Supabase Storage
+
+### Configuration Technique
+
+#### Installation
+
+Le package Puter.js est déjà installé dans les dépendances :
+
+```bash
+npm install @heyputer/puter.js
+```
+
+#### Fichiers Créés
+
+1. **`src/config/ai-prompts.ts`** : Configuration des prompts et traductions
+   - Pre-prompt optimisé pour des images réalistes de légumes
+   - Dictionnaire de traduction français → anglais (meilleurs résultats avec l'IA)
+   - Configuration des paramètres de génération
+
+2. **`src/hooks/useAIImageGeneration.ts`** : Hook React pour la génération d'images
+   - Gestion de l'état de génération (idle, generating, success, error)
+   - Conversion d'HTMLImageElement en File pour l'upload
+   - Gestion des erreurs
+
+3. **`src/components/AIImageGenerationDialog.tsx`** : Interface utilisateur
+   - Dialog modal pour le processus de génération
+   - Preview de l'image générée
+   - Options de régénération ou validation
+
+4. **`src/components/VegetableForm.tsx`** : Intégration dans le formulaire
+   - Bouton "Générer avec IA" ajouté au formulaire
+   - Workflow : Génération → Preview → Upload vers Supabase
+
+#### Prompts Optimisés
+
+Le système utilise un pre-prompt optimisé :
+
+```
+High-quality realistic photograph of a fresh {vegetable_name},
+centered in frame, close-up view, well-lit natural lighting,
+white or neutral background, professional food photography style,
+sharp focus, vibrant natural colors, no text, no watermark
+```
+
+Un prompt négatif est également appliqué pour exclure :
+- Qualité basse, flou, distorsion
+- Texte, watermarks, signatures
+- Dessins, illustrations, peintures
+- Plusieurs légumes dans la même image
+
+#### Traduction Automatique
+
+Le système traduit automatiquement les noms français en anglais pour de meilleurs résultats :
+
+- Tomate → Tomato
+- Carotte → Carrot
+- Pomme de terre → Potato
+- Salade → Lettuce
+- Courgette → Zucchini
+- ... (40+ traductions)
+
+### Modèles d'IA Disponibles
+
+Par défaut, l'application utilise **GPT Image-1** (OpenAI), mais vous pouvez modifier le modèle dans `src/config/ai-prompts.ts` :
+
+```typescript
+export const AI_IMAGE_CONFIG = {
+  model: 'gpt-image-1', // Changez ici
+  // Options : 'gpt-image-1', 'gpt-image-1.5', 'stabilityai/stable-diffusion-3-medium'
+  ...
+};
+```
+
+Modèles supportés :
+- **GPT Image-1** (recommandé) : Rapide, qualité élevée
+- **GPT Image-1.5** : Version améliorée
+- **Stable Diffusion 3** : Plus de contrôle sur les paramètres (width, height, steps)
+
+### Mode Test
+
+Pour le développement, vous pouvez activer le mode test pour éviter de consommer des crédits API :
+
+```typescript
+// Dans src/config/ai-prompts.ts
+export const AI_IMAGE_CONFIG = {
+  ...
+  testMode: true, // Activez le mode test
+};
+```
+
+### Limites et Performances
+
+- **Temps de génération** : 5-15 secondes selon le modèle
+- **Résolution** : 1024x1024 pixels (par défaut)
+- **Format** : PNG (converti depuis l'HTMLImageElement)
+- **Taille fichier** : ~500KB - 1.5MB après conversion
+- **Rate limiting** : Géré automatiquement par Puter.js
+
+### Dépannage
+
+#### Problème : L'image ne se génère pas
+
+**Solution** :
+- Vérifiez votre connexion internet
+- Essayez de régénérer l'image
+- Vérifiez la console du navigateur pour des erreurs
+
+#### Problème : L'image générée n'est pas cohérente
+
+**Solution** :
+- Utilisez des noms de légumes précis et standards
+- Évitez les abréviations ou noms régionaux
+- La traduction FR→EN améliore souvent les résultats
+
+#### Problème : Temps de génération trop long
+
+**Solution** :
+- C'est normal, attendez jusqu'à 20 secondes
+- Si timeout, cliquez sur "Réessayer"
+- Vous pouvez toujours utiliser l'upload manuel en parallèle
+
+### Ressources
+
+- **Documentation Puter.js** : https://docs.puter.com/AI/txt2img/
+- **Playground Puter.js** : https://docs.puter.com/playground/ai-txt2img/
+- **GitHub Puter** : https://github.com/HeyPuter/puter
+- **Blog Développeur** : https://developer.puter.com/
+
+### Notes Importantes
+
+1. **Pas de clé API requise** : Contrairement à d'autres services d'IA (DALL-E, Midjourney), Puter.js est gratuit et ne nécessite aucune inscription
+2. **Chaque utilisateur couvre son usage** : Le coût est réparti entre les utilisateurs finaux, pas sur le développeur
+3. **Pas de tracking** : Puter.js ne collecte aucune donnée personnelle
+4. **Upload automatique** : Les images générées sont automatiquement converties et uploadées vers Supabase Storage
+
+---
+
 **Note** : Assurez-vous que les variables d'environnement Supabase sont correctement configurées avant de déployer, sinon l'application ne pourra pas se connecter à la base de données.

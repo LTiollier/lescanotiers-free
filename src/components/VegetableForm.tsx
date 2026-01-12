@@ -1,4 +1,4 @@
-import { AddPhotoAlternate, Delete as DeleteIcon } from '@mui/icons-material';
+import { AddPhotoAlternate, AutoAwesome, Delete as DeleteIcon } from '@mui/icons-material';
 import {
   Alert,
   Box,
@@ -19,6 +19,7 @@ import {
 import { useEffect, useState } from 'react';
 import { useVegetableCategories } from '../hooks/useVegetableCategories';
 import type { Database } from '../types/database.types';
+import { AIImageGenerationDialog } from './AIImageGenerationDialog';
 import { VegetableAvatar } from './VegetableAvatar';
 
 type Vegetable = Database['public']['Tables']['vegetables']['Row'];
@@ -49,6 +50,7 @@ export function VegetableForm({
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [shouldDeleteImage, setShouldDeleteImage] = useState(false);
   const [imageError, setImageError] = useState<string | null>(null);
+  const [aiDialogOpen, setAiDialogOpen] = useState(false);
   const { data: categories, isLoading: categoriesLoading } = useVegetableCategories();
 
   useEffect(() => {
@@ -101,6 +103,27 @@ export function VegetableForm({
     setImagePreview(null);
     setShouldDeleteImage(true);
     setImageError(null);
+  };
+
+  const handleOpenAIDialog = () => {
+    setAiDialogOpen(true);
+  };
+
+  const handleCloseAIDialog = () => {
+    setAiDialogOpen(false);
+  };
+
+  const handleAIImageGenerated = (file: File) => {
+    // Handle the AI-generated image the same way as a manually uploaded file
+    setImageFile(file);
+    setShouldDeleteImage(false);
+
+    // Create preview URL
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setImagePreview(reader.result as string);
+    };
+    reader.readAsDataURL(file);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -191,21 +214,34 @@ export function VegetableForm({
               </Box>
             )}
 
-            <Button
-              variant="outlined"
-              component="label"
-              startIcon={<AddPhotoAlternate />}
-              disabled={isLoading}
-              fullWidth
-            >
-              {imagePreview ? "Changer l'image" : 'Ajouter une image'}
-              <input
-                type="file"
-                hidden
-                accept="image/jpeg,image/jpg,image/png,image/webp"
-                onChange={handleImageChange}
-              />
-            </Button>
+            <Box sx={{ display: 'flex', gap: 1 }}>
+              <Button
+                variant="outlined"
+                component="label"
+                startIcon={<AddPhotoAlternate />}
+                disabled={isLoading}
+                sx={{ flex: 1 }}
+              >
+                {imagePreview ? "Changer l'image" : 'Ajouter une image'}
+                <input
+                  type="file"
+                  hidden
+                  accept="image/jpeg,image/jpg,image/png,image/webp"
+                  onChange={handleImageChange}
+                />
+              </Button>
+
+              <Button
+                variant="outlined"
+                color="secondary"
+                startIcon={<AutoAwesome />}
+                onClick={handleOpenAIDialog}
+                disabled={isLoading || !name.trim()}
+                sx={{ flex: 1 }}
+              >
+                Générer avec IA
+              </Button>
+            </Box>
 
             {imageError && (
               <Alert severity="error" sx={{ mt: 1 }}>
@@ -215,6 +251,12 @@ export function VegetableForm({
 
             <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 1 }}>
               Formats acceptés: JPEG, PNG, WebP. Taille max: 2 MB.
+              {name.trim() && (
+                <>
+                  <br />💡 Utilisez le bouton "Générer avec IA" pour créer une image
+                  automatiquement.
+                </>
+              )}
             </Typography>
           </Box>
         </DialogContent>
@@ -231,6 +273,14 @@ export function VegetableForm({
           </Button>
         </DialogActions>
       </form>
+
+      {/* AI Image Generation Dialog */}
+      <AIImageGenerationDialog
+        open={aiDialogOpen}
+        onClose={handleCloseAIDialog}
+        vegetableName={name}
+        onImageGenerated={handleAIImageGenerated}
+      />
     </Dialog>
   );
 }
