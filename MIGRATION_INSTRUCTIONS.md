@@ -21,12 +21,22 @@ You need to apply this migration to your Supabase project manually.
 
 3. **Paste and Run:**
    - Paste the entire SQL content into the SQL Editor
+   - The migration is wrapped in a **transaction** (BEGIN...COMMIT)
+   - If any error occurs, everything will rollback automatically ✅
    - Click **"Run"** button
    - Wait for confirmation (should show "Success")
 
 4. **Verify tables were created:**
    - Go to: Table Editor
    - You should see: `profiles`, `parcels`, `vegetable_categories`, `vegetables`, `cycles`, `activities`, `times`
+
+5. **If something goes wrong:**
+   - The transaction will rollback automatically on error
+   - Or you can manually run the rollback script:
+     ```bash
+     cat supabase/migrations/20250112_rollback.sql
+     ```
+   - Then paste and run it in the SQL Editor to completely remove the schema
 
 ### Option 2: Using Supabase CLI
 

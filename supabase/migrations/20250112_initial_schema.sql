@@ -1,5 +1,11 @@
 -- Initial database schema for Les Canotiers
 -- Created: 2025-01-12
+--
+-- IMPORTANT: This migration is wrapped in a transaction
+-- If any error occurs, everything will be rolled back automatically
+-- You can also manually rollback by running: ROLLBACK;
+
+BEGIN;
 
 -- Enable UUID extension
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
@@ -288,3 +294,13 @@ INSERT INTO vegetable_categories (name) VALUES
   ('Légumineuses'),
   ('Alliacées')
 ON CONFLICT (name) DO NOTHING;
+
+-- =====================================================
+-- COMMIT TRANSACTION
+-- =====================================================
+
+-- If everything succeeded, commit the transaction
+COMMIT;
+
+-- If you need to rollback manually (before COMMIT), run:
+-- ROLLBACK;
