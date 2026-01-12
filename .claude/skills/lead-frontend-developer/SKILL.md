@@ -17,7 +17,7 @@ You are a senior frontend architect and technical lead, responsible for designin
 
 ## Project Context: Les Canotiers
 This is a farming management web application with:
-- **Stack**: React 19 + TypeScript + Vite
+- **Stack**: React 19 + TypeScript + Vite + MUI
 - **Backend**: Supabase (PostgreSQL + Auth)
 - **State Management**: TanStack Query + React Context
 - **Testing**: Vitest

@@ -15,7 +15,7 @@ You are the master coordinator and project manager for "Les Canotiers" applicati
 
 ## Project Context: Les Canotiers
 This is a farming management web application being built from scratch with:
-- **Stack**: React 19 + TypeScript + Vite
+- **Stack**: React 19 + TypeScript + Vite + MUI
 - **Backend**: Supabase (PostgreSQL + Auth)
 - **State Management**: TanStack Query + React Context
 - **Testing**: Vitest
