@@ -4,6 +4,7 @@ import {
   Box,
   Button,
   Card,
+  Chip,
   CircularProgress,
   IconButton,
   Paper,
@@ -19,6 +20,7 @@ import {
 import { useState } from 'react';
 import { ConfirmDialog } from '../components/ConfirmDialog';
 import { VegetableForm } from '../components/VegetableForm';
+import { useVegetableCategories } from '../hooks/useVegetableCategories';
 import { useIsAdmin } from '../hooks/useUserProfile';
 import {
   useCreateVegetable,
@@ -32,6 +34,7 @@ type Vegetable = Database['public']['Tables']['vegetables']['Row'];
 
 export function Vegetables() {
   const { data: vegetables, isLoading, error } = useVegetables();
+  const { data: categories } = useVegetableCategories();
   const createVegetable = useCreateVegetable();
   const updateVegetable = useUpdateVegetable();
   const deleteVegetable = useDeleteVegetable();
@@ -65,13 +68,13 @@ export function Vegetables() {
     setDeleteDialogOpen(true);
   };
 
-  const handleFormSubmit = async (name: string) => {
+  const handleFormSubmit = async (name: string, categoryId: number | null) => {
     try {
       if (selectedVegetable) {
-        await updateVegetable.mutateAsync({ id: selectedVegetable.id, updates: { name } });
+        await updateVegetable.mutateAsync({ id: selectedVegetable.id, updates: { name, category_id: categoryId } });
         setSnackbar({ open: true, message: 'Légume modifié avec succès', severity: 'success' });
       } else {
-        await createVegetable.mutateAsync({ name });
+        await createVegetable.mutateAsync({ name, category_id: categoryId });
         setSnackbar({ open: true, message: 'Légume ajouté avec succès', severity: 'success' });
       }
       setFormOpen(false);
@@ -133,6 +136,7 @@ export function Vegetables() {
               <TableHead>
                 <TableRow>
                   <TableCell>Nom</TableCell>
+                  <TableCell>Catégorie</TableCell>
                   <TableCell align="right">Date de création</TableCell>
                   {isAdmin && <TableCell align="right">Actions</TableCell>}
                 </TableRow>
@@ -140,39 +144,49 @@ export function Vegetables() {
               <TableBody>
                 {vegetables?.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={3} align="center">
+                    <TableCell colSpan={4} align="center">
                       <Typography variant="body2" color="text.secondary" sx={{ py: 4 }}>
                         Aucun légume. Cliquez sur "Ajouter un légume" pour commencer.
                       </Typography>
                     </TableCell>
                   </TableRow>
                 ) : (
-                  vegetables?.map((vegetable) => (
-                    <TableRow key={vegetable.id}>
-                      <TableCell>{vegetable.name}</TableCell>
-                      <TableCell align="right">
-                        {new Date(vegetable.created_at).toLocaleDateString('fr-FR')}
-                      </TableCell>
-                      {isAdmin && (
-                        <TableCell align="right">
-                          <IconButton
-                            size="small"
-                            onClick={() => handleEdit(vegetable)}
-                            color="primary"
-                          >
-                            <EditIcon />
-                          </IconButton>
-                          <IconButton
-                            size="small"
-                            onClick={() => handleDelete(vegetable)}
-                            color="error"
-                          >
-                            <DeleteIcon />
-                          </IconButton>
+                  vegetables?.map((vegetable) => {
+                    const category = categories?.find((c) => c.id === vegetable.category_id);
+                    return (
+                      <TableRow key={vegetable.id}>
+                        <TableCell>{vegetable.name}</TableCell>
+                        <TableCell>
+                          {category ? (
+                            <Chip label={category.name} size="small" color="primary" variant="outlined" />
+                          ) : (
+                            <Typography variant="body2" color="text.secondary">-</Typography>
+                          )}
                         </TableCell>
-                      )}
-                    </TableRow>
-                  ))
+                        <TableCell align="right">
+                          {new Date(vegetable.created_at).toLocaleDateString('fr-FR')}
+                        </TableCell>
+                        {isAdmin && (
+                          <TableCell align="right">
+                            <IconButton
+                              size="small"
+                              onClick={() => handleEdit(vegetable)}
+                              color="primary"
+                            >
+                              <EditIcon />
+                            </IconButton>
+                            <IconButton
+                              size="small"
+                              onClick={() => handleDelete(vegetable)}
+                              color="error"
+                            >
+                              <DeleteIcon />
+                            </IconButton>
+                          </TableCell>
+                        )}
+                      </TableRow>
+                    );
+                  })
                 )}
               </TableBody>
             </Table>
