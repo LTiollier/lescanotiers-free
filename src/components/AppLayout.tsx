@@ -33,6 +33,8 @@ import { useState } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useUserProfile } from '../hooks/useUserProfile';
+import { PWAInstallPrompt } from './PWAInstallPrompt';
+import { PWAUpdateNotification } from './PWAUpdateNotification';
 
 const drawerWidth = 240;
 
@@ -243,6 +245,9 @@ export function AppLayout() {
         <Toolbar /> {/* Spacer for fixed AppBar */}
         <Outlet />
       </Box>
+
+      <PWAInstallPrompt />
+      <PWAUpdateNotification />
     </Box>
   );
 }

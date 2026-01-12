@@ -11,6 +11,7 @@ Application de gestion pour Les Canotiers - Club de canoë-kayak.
 - **State Management** : TanStack Query
 - **Testing** : Vitest + Testing Library
 - **Code Quality** : Biome (linting & formatting)
+- **PWA** : Vite Plugin PWA + Workbox
 - **Déploiement** : Vercel
 
 ## Développement Local
@@ -82,7 +83,60 @@ src/
 - Gestion des rôles (Admin, Responsable, Membre)
 - Gestion des parcelles de terrain
 - Navigation responsive avec Material-UI
+- Progressive Web App (PWA) avec mode hors ligne
+- Notifications de mise à jour automatiques
+- Installation sur mobile et desktop
+- Service Worker pour le cache intelligent
 - Dark mode (à venir)
+
+## Progressive Web App (PWA)
+
+L'application est une Progressive Web App complète qui offre :
+
+### Fonctionnalités PWA
+
+- **Installation** : L'application peut être installée sur n'importe quel appareil (mobile, tablette, desktop)
+- **Mode Hors Ligne** : Fonctionne même sans connexion internet grâce au Service Worker
+- **Mises à jour automatiques** : Notification automatique quand une nouvelle version est disponible
+- **Cache intelligent** :
+  - Cache-First pour les ressources statiques (CSS, JS, images)
+  - Network-First pour les API Supabase (avec fallback sur le cache)
+  - Expiration automatique des caches pour optimiser l'espace
+
+### Tester la PWA en local
+
+```bash
+# Builder l'application
+npm run build
+
+# Prévisualiser le build (avec Service Worker activé)
+npm run preview
+
+# Ouvrir dans le navigateur
+# L'application sera disponible sur http://localhost:4173
+```
+
+Pour tester l'installation PWA :
+1. Ouvrir l'application dans Chrome/Edge
+2. Cliquer sur l'icône d'installation dans la barre d'adresse
+3. Ou utiliser le bouton "Installer" qui apparaît dans l'application
+
+### Service Worker
+
+Le Service Worker est automatiquement généré par Vite Plugin PWA et Workbox. Il gère :
+- La mise en cache des assets statiques
+- Le cache des requêtes API avec stratégie Network-First
+- Les mises à jour en arrière-plan
+- Le mode hors ligne
+
+### Assets PWA
+
+Les icônes et assets PWA sont situés dans le dossier `public/` :
+- `android-icon-192x192.png` : Icône Android (192x192px)
+- `apple-icon.png` : Icône iOS (180x180px)
+- `favicon.ico` : Favicon du site
+- `logo.jpg` : Logo principal (512x512px)
+- `manifest.json` : Manifeste PWA avec métadonnées
 
 ## Déploiement
 
