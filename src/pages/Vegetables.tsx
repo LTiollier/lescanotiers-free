@@ -20,8 +20,8 @@ import {
 import { useState } from 'react';
 import { ConfirmDialog } from '../components/ConfirmDialog';
 import { VegetableForm } from '../components/VegetableForm';
-import { useVegetableCategories } from '../hooks/useVegetableCategories';
 import { useIsAdmin } from '../hooks/useUserProfile';
+import { useVegetableCategories } from '../hooks/useVegetableCategories';
 import {
   useCreateVegetable,
   useDeleteVegetable,
@@ -71,7 +71,10 @@ export function Vegetables() {
   const handleFormSubmit = async (name: string, categoryId: number | null) => {
     try {
       if (selectedVegetable) {
-        await updateVegetable.mutateAsync({ id: selectedVegetable.id, updates: { name, category_id: categoryId } });
+        await updateVegetable.mutateAsync({
+          id: selectedVegetable.id,
+          updates: { name, category_id: categoryId },
+        });
         setSnackbar({ open: true, message: 'Légume modifié avec succès', severity: 'success' });
       } else {
         await createVegetable.mutateAsync({ name, category_id: categoryId });
@@ -158,9 +161,16 @@ export function Vegetables() {
                         <TableCell>{vegetable.name}</TableCell>
                         <TableCell>
                           {category ? (
-                            <Chip label={category.name} size="small" color="primary" variant="outlined" />
+                            <Chip
+                              label={category.name}
+                              size="small"
+                              color="primary"
+                              variant="outlined"
+                            />
                           ) : (
-                            <Typography variant="body2" color="text.secondary">-</Typography>
+                            <Typography variant="body2" color="text.secondary">
+                              -
+                            </Typography>
                           )}
                         </TableCell>
                         <TableCell align="right">
