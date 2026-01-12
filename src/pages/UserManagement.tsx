@@ -269,7 +269,12 @@ export function UserManagement() {
       </Dialog>
 
       {/* Edit Role Dialog */}
-      <Dialog open={roleDialogOpen} onClose={() => setRoleDialogOpen(false)} maxWidth="xs" fullWidth>
+      <Dialog
+        open={roleDialogOpen}
+        onClose={() => setRoleDialogOpen(false)}
+        maxWidth="xs"
+        fullWidth
+      >
         <DialogTitle>Modifier le rôle</DialogTitle>
         <DialogContent>
           <Box sx={{ pt: 2 }}>

@@ -86,10 +86,7 @@ export function useUpdateUserRole() {
 
   return useMutation({
     mutationFn: async ({ userId, role }: UpdateUserRoleParams) => {
-      const { error } = await supabase
-        .from('profiles')
-        .update({ role })
-        .eq('id', userId);
+      const { error } = await supabase.from('profiles').update({ role }).eq('id', userId);
 
       if (error) throw error;
     },
@@ -112,10 +109,7 @@ export function useDeleteUser() {
       // We can't delete auth users from the client side
       // So we'll just mark the profile as inactive by removing the username
       // Or you could add an 'active' field to the profiles table
-      const { error } = await supabase
-        .from('profiles')
-        .update({ username: null })
-        .eq('id', userId);
+      const { error } = await supabase.from('profiles').update({ username: null }).eq('id', userId);
 
       if (error) throw error;
     },
