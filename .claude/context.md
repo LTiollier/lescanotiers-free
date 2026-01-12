@@ -42,4 +42,4 @@
     "Gestion des Erreurs":
       "Error Boundaries": Utilisation des `Error Boundaries` de React pour capturer les erreurs de rendu.
       "Reporting des erreurs": en production avec un service comme Sentry ou directement dans les logs Vercel.
-  Conclusion: "Ce document sert de fondation technique pour guider le développement, assurer la cohérence et atteindre un haut niveau de qualité pour la nouvelle version de \"Les Canotiers\"."
+  Conclusion: "Ce document sert de fondation technique pour guider le développement, assurer la cohérence et atteindre un haut niveau de qualité pour la nouvelle version de \"Les Canotiers\". Il faut TOUJOURS et IMPERATIVEMENT lancer l'agent skills project-orchestrator qui s'occupera d'appeler les bons agents skills."
