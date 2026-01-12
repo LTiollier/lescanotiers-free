@@ -1,13 +1,11 @@
-project-orchestrator - 2026-01-12 21:20:26 - Mobile-First Responsive Design
+project-orchestrator - 2026-01-12 21:25:00 - Vegetable Images Upload System with Supabase Storage
 
 Travail effectué:
-- Création d'un composant MobileCard générique réutilisable
-- Optimisation complète de Times.tsx pour mobile (page prioritaire)
-- Optimisation de Cycles.tsx pour mobile avec cards et FAB
-- Optimisation de Parcels.tsx pour mobile
-- Optimisation de Vegetables.tsx pour mobile
-- Optimisation de Activities.tsx pour mobile
-- Optimisation de UserManagement.tsx pour mobile
-- Amélioration de AppLayout.tsx (padding mobile et espace pour FAB)
-- Ajout de fullScreen sur tous les Dialog pour mobile
-- Implémentation de FloatingActionButton (FAB) pour les actions principales sur mobile
+- Ajout du champ image_url dans les types TypeScript de la table vegetables
+- Création du hook useImageUpload.ts pour gérer l'upload/suppression d'images vers Supabase Storage
+- Création du composant VegetableAvatar.tsx pour afficher les images avec fallback
+- Mise à jour de VegetableForm.tsx avec preview d'image, validation et upload
+- Mise à jour de Vegetables.tsx pour afficher les avatars dans la liste (table et cards mobile)
+- Mise à jour de TimeForm.tsx pour afficher les avatars dans le Select des cycles
+- Mise à jour de useCycles.ts pour inclure image_url dans les relations
+- Documentation complète dans DEPLOYMENT.md pour configurer Supabase Storage (bucket + RLS policies)

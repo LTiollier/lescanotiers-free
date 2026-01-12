@@ -7,7 +7,7 @@ type CycleInsert = Database['public']['Tables']['cycles']['Insert'];
 type CycleUpdate = Database['public']['Tables']['cycles']['Update'];
 
 export interface CycleWithRelations extends Cycle {
-  vegetables?: { id: number; name: string };
+  vegetables?: { id: number; name: string; image_url: string | null };
   parcels?: { id: number; name: string };
 }
 
@@ -20,7 +20,7 @@ export function useCycles() {
     queryFn: async (): Promise<CycleWithRelations[]> => {
       const { data, error } = await supabase
         .from('cycles')
-        .select('*, vegetables(id, name), parcels(id, name)')
+        .select('*, vegetables(id, name, image_url), parcels(id, name)')
         .order('starts_at', { ascending: false });
 
       if (error) throw error;

@@ -178,4 +178,177 @@ Accédez-y via le dashboard Vercel de votre projet.
 
 ---
 
+## Configuration Supabase Storage
+
+L'application utilise Supabase Storage pour gérer les images des légumes. Voici comment configurer le bucket.
+
+### Étape 1 : Créer le Bucket
+
+1. Connectez-vous à [Supabase](https://app.supabase.com)
+2. Sélectionnez votre projet
+3. Allez dans **Storage** dans le menu latéral
+4. Cliquez sur **"New bucket"**
+5. Configurez le bucket :
+   - **Name** : `vegetables-images`
+   - **Public bucket** : Activé (pour permettre l'accès public aux images)
+6. Cliquez sur **"Create bucket"**
+
+### Étape 2 : Configurer les Policies RLS
+
+Le bucket doit avoir des policies pour gérer l'accès aux images :
+
+#### Policy 1 : Lecture publique (pour afficher les images)
+
+```sql
+CREATE POLICY "Public read access for vegetable images"
+ON storage.objects FOR SELECT
+TO public
+USING (bucket_id = 'vegetables-images');
+```
+
+**Comment l'ajouter via l'interface :**
+1. Allez dans **Storage > Policies**
+2. Sélectionnez le bucket `vegetables-images`
+3. Cliquez sur **"New policy"**
+4. Choisissez **"Custom policy"**
+5. Configurez :
+   - **Policy name** : Public read access for vegetable images
+   - **Policy command** : SELECT
+   - **Target roles** : public
+   - **USING expression** : `bucket_id = 'vegetables-images'`
+
+#### Policy 2 : Upload pour les admins authentifiés
+
+```sql
+CREATE POLICY "Admin insert access for vegetable images"
+ON storage.objects FOR INSERT
+TO authenticated
+WITH CHECK (
+  bucket_id = 'vegetables-images'
+  AND (
+    EXISTS (
+      SELECT 1 FROM profiles
+      WHERE profiles.id = auth.uid()
+      AND profiles.role = 'admin'
+    )
+  )
+);
+```
+
+**Comment l'ajouter via l'interface :**
+1. Allez dans **Storage > Policies**
+2. Sélectionnez le bucket `vegetables-images`
+3. Cliquez sur **"New policy"**
+4. Choisissez **"Custom policy"**
+5. Configurez :
+   - **Policy name** : Admin insert access for vegetable images
+   - **Policy command** : INSERT
+   - **Target roles** : authenticated
+   - **WITH CHECK expression** :
+     ```
+     bucket_id = 'vegetables-images'
+     AND (
+       EXISTS (
+         SELECT 1 FROM profiles
+         WHERE profiles.id = auth.uid()
+         AND profiles.role = 'admin'
+       )
+     )
+     ```
+
+#### Policy 3 : Suppression pour les admins authentifiés
+
+```sql
+CREATE POLICY "Admin delete access for vegetable images"
+ON storage.objects FOR DELETE
+TO authenticated
+USING (
+  bucket_id = 'vegetables-images'
+  AND (
+    EXISTS (
+      SELECT 1 FROM profiles
+      WHERE profiles.id = auth.uid()
+      AND profiles.role = 'admin'
+    )
+  )
+);
+```
+
+**Comment l'ajouter via l'interface :**
+1. Allez dans **Storage > Policies**
+2. Sélectionnez le bucket `vegetables-images`
+3. Cliquez sur **"New policy"**
+4. Choisissez **"Custom policy"**
+5. Configurez :
+   - **Policy name** : Admin delete access for vegetable images
+   - **Policy command** : DELETE
+   - **Target roles** : authenticated
+   - **USING expression** :
+     ```
+     bucket_id = 'vegetables-images'
+     AND (
+       EXISTS (
+         SELECT 1 FROM profiles
+         WHERE profiles.id = auth.uid()
+         AND profiles.role = 'admin'
+       )
+     )
+     ```
+
+### Étape 3 : Ajouter la colonne image_url dans la table vegetables
+
+Si ce n'est pas déjà fait, ajoutez la colonne `image_url` à la table `vegetables` :
+
+```sql
+ALTER TABLE vegetables
+ADD COLUMN image_url TEXT;
+```
+
+**Via l'interface Supabase :**
+1. Allez dans **Database > Tables**
+2. Sélectionnez la table `vegetables`
+3. Cliquez sur **"New column"**
+4. Configurez :
+   - **Name** : `image_url`
+   - **Type** : `text`
+   - **Nullable** : Coché (l'image est optionnelle)
+5. Cliquez sur **"Save"**
+
+### Étape 4 : Limites et Configuration
+
+Par défaut, Supabase Storage a les limites suivantes (plan gratuit) :
+- **Taille max par fichier** : 50 MB
+- **Stockage total** : 1 GB
+
+L'application est configurée pour :
+- **Taille max par fichier** : 2 MB (validation côté client)
+- **Formats acceptés** : JPEG, JPG, PNG, WebP
+
+### Étape 5 : Vérification
+
+Pour vérifier que tout fonctionne :
+
+1. Connectez-vous à l'application en tant qu'admin
+2. Allez dans **Gestion des Légumes**
+3. Créez ou modifiez un légume
+4. Ajoutez une image
+5. Vérifiez que l'image s'affiche dans la liste et dans le formulaire de saisie des temps
+
+### Structure des fichiers dans le bucket
+
+Les images sont organisées par légume :
+```
+vegetables-images/
+  ├── 1/
+  │   └── vegetable-1-1673456789.jpg
+  ├── 2/
+  │   └── vegetable-2-1673456790.png
+  └── 3/
+      └── vegetable-3-1673456791.webp
+```
+
+Chaque image est nommée avec l'ID du légume et un timestamp pour éviter les collisions.
+
+---
+
 **Note** : Assurez-vous que les variables d'environnement Supabase sont correctement configurées avant de déployer, sinon l'application ne pourra pas se connecter à la base de données.

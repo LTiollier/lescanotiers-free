@@ -31,7 +31,7 @@ export function useCreateVegetable() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (vegetable: VegetableInsert) => {
+    mutationFn: async (vegetable: VegetableInsert): Promise<Vegetable> => {
       const { data, error } = await supabase
         .from('vegetables')
         .insert(vegetable as never)
@@ -39,7 +39,7 @@ export function useCreateVegetable() {
         .single();
 
       if (error) throw error;
-      return data;
+      return data as Vegetable;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['vegetables'] });

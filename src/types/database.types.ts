@@ -79,18 +79,21 @@ export interface Database {
           id: number;
           name: string;
           category_id: number | null;
+          image_url: string | null;
           created_at: string;
         };
         Insert: {
           id?: number;
           name: string;
           category_id?: number | null;
+          image_url?: string | null;
           created_at?: string;
         };
         Update: {
           id?: number;
           name?: string;
           category_id?: number | null;
+          image_url?: string | null;
           created_at?: string;
         };
       };

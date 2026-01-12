@@ -1,4 +1,5 @@
 import {
+  Box,
   Button,
   CircularProgress,
   Dialog,
@@ -17,6 +18,7 @@ import { useEffect, useState } from 'react';
 import { useActivities } from '../hooks/useActivities';
 import { useCycles } from '../hooks/useCycles';
 import type { Database } from '../types/database.types';
+import { VegetableAvatar } from './VegetableAvatar';
 
 type Time = Database['public']['Tables']['times']['Row'];
 
@@ -96,7 +98,16 @@ export function TimeForm({ open, onClose, onSubmit, time, isLoading }: TimeFormP
               ) : (
                 cycles?.map((cycle) => (
                   <MenuItem key={cycle.id} value={cycle.id}>
-                    {cycle.vegetables?.name || 'N/A'} - {cycle.parcels?.name || 'N/A'}
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                      <VegetableAvatar
+                        imageUrl={cycle.vegetables?.image_url}
+                        name={cycle.vegetables?.name || 'N/A'}
+                        size="small"
+                      />
+                      <span>
+                        {cycle.vegetables?.name || 'N/A'} - {cycle.parcels?.name || 'N/A'}
+                      </span>
+                    </Box>
                   </MenuItem>
                 ))
               )}

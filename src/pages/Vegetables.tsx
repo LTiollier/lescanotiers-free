@@ -23,7 +23,13 @@ import {
 import { useState } from 'react';
 import { ConfirmDialog } from '../components/ConfirmDialog';
 import { MobileCard } from '../components/MobileCard';
+import { VegetableAvatar } from '../components/VegetableAvatar';
 import { VegetableForm } from '../components/VegetableForm';
+import {
+  useDeleteVegetableImage,
+  useReplaceVegetableImage,
+  useUploadVegetableImage,
+} from '../hooks/useImageUpload';
 import { useIsAdmin } from '../hooks/useUserProfile';
 import { useVegetableCategories } from '../hooks/useVegetableCategories';
 import {
@@ -42,6 +48,9 @@ export function Vegetables() {
   const createVegetable = useCreateVegetable();
   const updateVegetable = useUpdateVegetable();
   const deleteVegetable = useDeleteVegetable();
+  const uploadImage = useUploadVegetableImage();
+  const replaceImage = useReplaceVegetableImage();
+  const deleteImage = useDeleteVegetableImage();
   const isAdmin = useIsAdmin();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
@@ -74,16 +83,56 @@ export function Vegetables() {
     setDeleteDialogOpen(true);
   };
 
-  const handleFormSubmit = async (name: string, categoryId: number | null) => {
+  const handleFormSubmit = async (
+    name: string,
+    categoryId: number | null,
+    imageFile: File | null,
+    shouldDeleteImage: boolean,
+  ) => {
     try {
+      let imageUrl: string | null = selectedVegetable?.image_url || null;
+
       if (selectedVegetable) {
+        // Update existing vegetable
+        // Handle image changes first
+        if (shouldDeleteImage && selectedVegetable.image_url) {
+          await deleteImage.mutateAsync(selectedVegetable.image_url);
+          imageUrl = null;
+        } else if (imageFile) {
+          imageUrl = await replaceImage.mutateAsync({
+            vegetableId: selectedVegetable.id,
+            file: imageFile,
+            oldImageUrl: selectedVegetable.image_url,
+          });
+        }
+
         await updateVegetable.mutateAsync({
           id: selectedVegetable.id,
-          updates: { name, category_id: categoryId },
+          updates: { name, category_id: categoryId, image_url: imageUrl },
         });
         setSnackbar({ open: true, message: 'Légume modifié avec succès', severity: 'success' });
       } else {
-        await createVegetable.mutateAsync({ name, category_id: categoryId });
+        // Create new vegetable
+        const newVegetable = await createVegetable.mutateAsync({
+          name,
+          category_id: categoryId,
+          image_url: null, // Temporarily null until we upload
+        });
+
+        // Upload image if provided
+        if (imageFile && newVegetable) {
+          imageUrl = await uploadImage.mutateAsync({
+            vegetableId: newVegetable.id,
+            file: imageFile,
+          });
+
+          // Update vegetable with image URL
+          await updateVegetable.mutateAsync({
+            id: newVegetable.id,
+            updates: { image_url: imageUrl },
+          });
+        }
+
         setSnackbar({ open: true, message: 'Légume ajouté avec succès', severity: 'success' });
       }
       setFormOpen(false);
@@ -165,6 +214,16 @@ export function Vegetables() {
                   key={vegetable.id}
                   fields={[
                     {
+                      label: 'Image',
+                      value: (
+                        <VegetableAvatar
+                          imageUrl={vegetable.image_url}
+                          name={vegetable.name}
+                          size="medium"
+                        />
+                      ),
+                    },
+                    {
                       label: 'Nom',
                       value: vegetable.name,
                       emphasized: true,
@@ -214,6 +273,7 @@ export function Vegetables() {
             <Table>
               <TableHead>
                 <TableRow>
+                  <TableCell width="80">Image</TableCell>
                   <TableCell>Nom</TableCell>
                   <TableCell>Catégorie</TableCell>
                   <TableCell align="right">Date de création</TableCell>
@@ -223,7 +283,7 @@ export function Vegetables() {
               <TableBody>
                 {vegetables?.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={4} align="center">
+                    <TableCell colSpan={5} align="center">
                       <Typography variant="body2" color="text.secondary" sx={{ py: 4 }}>
                         Aucun légume. Cliquez sur "Ajouter un légume" pour commencer.
                       </Typography>
@@ -234,6 +294,13 @@ export function Vegetables() {
                     const category = categories?.find((c) => c.id === vegetable.category_id);
                     return (
                       <TableRow key={vegetable.id}>
+                        <TableCell>
+                          <VegetableAvatar
+                            imageUrl={vegetable.image_url}
+                            name={vegetable.name}
+                            size="medium"
+                          />
+                        </TableCell>
                         <TableCell>{vegetable.name}</TableCell>
                         <TableCell>
                           {category ? (
