@@ -1,2 +1,2 @@
-project-orchestrator - 2026-01-12 17:11:39
-Implemented times management (CRUD) with cycle, activity, date, minutes and quantity tracking.
+project-orchestrator - 2026-01-12 17:30:15
+Implemented activities management (CRUD) with admin-only access control.
