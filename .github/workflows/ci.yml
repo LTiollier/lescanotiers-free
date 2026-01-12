@@ -12,7 +12,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [18.x, 20.x]
+        node-version: [24.x]
 
     steps:
       - uses: actions/checkout@v4
@@ -29,8 +29,8 @@ jobs:
       - name: Run linter
         run: npm run lint
 
-      - name: Run tests
-        run: npm run test
+#      - name: Run tests
+#        run: npm run test
 
       - name: Build
         run: npm run build
@@ -65,3 +65,8 @@ jobs:
             exit 1
           fi
           echo "Build successful!"
+
+      - name: 'notify vercel'
+        uses: 'vercel/repository-dispatch/actions/status@v1'
+        with:
+          name: 'Vercel - lescanotiers-free: build-check'

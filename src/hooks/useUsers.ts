@@ -62,9 +62,10 @@ export function useCreateUser() {
       // Update profile with role and username
       const { error: profileError } = await supabase
         .from('profiles')
+        // @ts-expect-error - Supabase type inference issue with Update type
         .update({
           username: username || null,
-          role,
+          role: role,
         })
         .eq('id', authData.user.id);
 
@@ -86,7 +87,11 @@ export function useUpdateUserRole() {
 
   return useMutation({
     mutationFn: async ({ userId, role }: UpdateUserRoleParams) => {
-      const { error } = await supabase.from('profiles').update({ role }).eq('id', userId);
+      const { error } = await supabase
+        .from('profiles')
+        // @ts-expect-error - Supabase type inference issue with Update type
+        .update({ role })
+        .eq('id', userId);
 
       if (error) throw error;
     },
@@ -109,7 +114,11 @@ export function useDeleteUser() {
       // We can't delete auth users from the client side
       // So we'll just mark the profile as inactive by removing the username
       // Or you could add an 'active' field to the profiles table
-      const { error } = await supabase.from('profiles').update({ username: null }).eq('id', userId);
+      const { error } = await supabase
+        .from('profiles')
+        // @ts-expect-error - Supabase type inference issue with Update type
+        .update({ username: null })
+        .eq('id', userId);
 
       if (error) throw error;
     },

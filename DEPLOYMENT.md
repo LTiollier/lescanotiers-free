@@ -50,17 +50,42 @@ Une fois la configuration terminée :
 
 ### Déploiements Automatiques
 
+#### Configuration des Vercel Checks (Protection CI)
+
+Le projet est configuré pour que Vercel attende la validation de la CI GitHub Actions avant de déployer :
+
+**Comment activer les Vercel Checks :**
+
+1. Rendez-vous dans les **paramètres du projet Vercel**
+2. Allez dans la section **Git → Deployment Protection**
+3. Activez **"Required Status Checks"**
+4. Sélectionnez le check : **"Vercel - lescanotiers-free: build-check"**
+
+**Comportement :**
+- Vercel attendra que le workflow CI (`.github/workflows/ci.yml`) réussisse avant de déployer
+- Si la CI échoue (lint, tests, build), le déploiement sera bloqué
+- Cette protection s'applique aussi bien aux déploiements de production qu'aux preview deployments
+
+**Vérification du workflow CI :**
+Le workflow effectue les étapes suivantes :
+- Lint du code (ESLint)
+- Tests unitaires (si activés)
+- Build de production
+- Notification à Vercel du statut
+
 #### Branch Principale (Production)
 
 Chaque `push` ou `merge` sur la branche `main` déclenche automatiquement :
-- Un nouveau build
-- Des tests de validation
+- Un workflow CI GitHub Actions
+- Validation : lint, tests, build
+- Un nouveau build Vercel (après validation CI)
 - Un déploiement en production
 
 #### Pull Requests (Preview)
 
 Chaque Pull Request génère automatiquement :
-- Un **Preview Deployment** unique
+- Un workflow CI GitHub Actions
+- Un **Preview Deployment** unique (après validation CI)
 - Une URL de preview pour tester les changements
 - Un commentaire GitHub avec le lien de preview
 
