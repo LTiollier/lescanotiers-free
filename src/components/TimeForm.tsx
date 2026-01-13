@@ -70,6 +70,16 @@ export function TimeForm({ open, onClose, onSubmit, time, isLoading }: TimeFormP
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
+  const activeCycles = cycles?.filter((cycle) => {
+    const today = dayjs();
+    const start = dayjs(cycle.starts_at);
+    const end = dayjs(cycle.ends_at);
+    return (
+      (today.isAfter(start, 'day') || today.isSame(start, 'day')) &&
+      (today.isBefore(end, 'day') || today.isSame(end, 'day'))
+    );
+  });
+
   useEffect(() => {
     if (open) {
       if (time) {
@@ -170,7 +180,7 @@ export function TimeForm({ open, onClose, onSubmit, time, isLoading }: TimeFormP
                 <CircularProgress />
               </Box>
             ) : (
-              cycles?.map((cycle) => (
+              activeCycles?.map((cycle) => (
                 <Card
                   key={cycle.id}
                   elevation={cycleId === cycle.id ? 4 : 1}
