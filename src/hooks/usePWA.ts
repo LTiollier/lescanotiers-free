@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 
 export function usePWA() {
   const [needRefreshState, setNeedRefreshState] = useState(false);
+  const [isOffline, setIsOffline] = useState(!navigator.onLine);
 
   const {
     offlineReady: [offlineReady, setOfflineReady],
@@ -16,6 +17,19 @@ export function usePWA() {
       console.error('Service Worker registration error:', error);
     },
   });
+
+  useEffect(() => {
+    const handleOnline = () => setIsOffline(false);
+    const handleOffline = () => setIsOffline(true);
+
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, []);
 
   useEffect(() => {
     if (needRefreshFromSW) {
@@ -39,5 +53,6 @@ export function usePWA() {
     needRefresh: needRefreshState,
     updateApp,
     closeNotification,
+    isOffline,
   };
 }

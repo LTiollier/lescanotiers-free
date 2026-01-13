@@ -16,6 +16,7 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  Tooltip,
   Typography,
   useMediaQuery,
   useTheme,
@@ -24,8 +25,14 @@ import { useState } from 'react';
 import { ConfirmDialog } from '../components/ConfirmDialog';
 import { CycleForm } from '../components/CycleForm';
 import { MobileCard } from '../components/MobileCard';
-import type { CycleWithRelations } from '../hooks/useCycles';
-import { useCreateCycle, useCycles, useDeleteCycle, useUpdateCycle } from '../hooks/useCycles';
+import {
+  type CycleWithRelations,
+  useCreateCycle,
+  useCycles,
+  useDeleteCycle,
+  useUpdateCycle,
+} from '../hooks/useCycles';
+import { usePWA } from '../hooks/usePWA';
 import { useIsAdmin } from '../hooks/useUserProfile';
 
 export function Cycles() {
@@ -34,6 +41,7 @@ export function Cycles() {
   const updateCycle = useUpdateCycle();
   const deleteCycle = useDeleteCycle();
   const isAdmin = useIsAdmin();
+  const { isOffline } = usePWA();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
@@ -143,9 +151,18 @@ export function Cycles() {
       >
         <Typography variant={isMobile ? 'h5' : 'h4'}>Gestion des Cycles</Typography>
         {isAdmin && !isMobile && (
-          <Button variant="contained" startIcon={<AddIcon />} onClick={handleAdd}>
-            Ajouter un cycle
-          </Button>
+          <Tooltip title={isOffline ? 'Indisponible hors-ligne' : ''}>
+            <span>
+              <Button
+                variant="contained"
+                startIcon={<AddIcon />}
+                onClick={handleAdd}
+                disabled={isOffline}
+              >
+                Ajouter un cycle
+              </Button>
+            </span>
+          </Tooltip>
         )}
       </Box>
 
@@ -222,11 +239,13 @@ export function Cycles() {
                             icon: <EditIcon />,
                             onClick: () => handleEdit(cycle),
                             color: 'primary',
+                            disabled: isOffline,
                           },
                           {
                             icon: <DeleteIcon />,
                             onClick: () => handleDelete(cycle),
                             color: 'error',
+                            disabled: isOffline,
                           },
                         ]
                       : undefined
@@ -292,20 +311,30 @@ export function Cycles() {
                         </TableCell>
                         {isAdmin && (
                           <TableCell align="right">
-                            <IconButton
-                              size="small"
-                              onClick={() => handleEdit(cycle)}
-                              color="primary"
-                            >
-                              <EditIcon />
-                            </IconButton>
-                            <IconButton
-                              size="small"
-                              onClick={() => handleDelete(cycle)}
-                              color="error"
-                            >
-                              <DeleteIcon />
-                            </IconButton>
+                            <Tooltip title={isOffline ? 'Indisponible hors-ligne' : ''}>
+                              <span>
+                                <IconButton
+                                  size="small"
+                                  onClick={() => handleEdit(cycle)}
+                                  color="primary"
+                                  disabled={isOffline}
+                                >
+                                  <EditIcon />
+                                </IconButton>
+                              </span>
+                            </Tooltip>
+                            <Tooltip title={isOffline ? 'Indisponible hors-ligne' : ''}>
+                              <span>
+                                <IconButton
+                                  size="small"
+                                  onClick={() => handleDelete(cycle)}
+                                  color="error"
+                                  disabled={isOffline}
+                                >
+                                  <DeleteIcon />
+                                </IconButton>
+                              </span>
+                            </Tooltip>
                           </TableCell>
                         )}
                       </TableRow>
@@ -320,18 +349,23 @@ export function Cycles() {
 
       {/* FAB pour mobile */}
       {isMobile && isAdmin && (
-        <Fab
-          color="primary"
-          aria-label="Ajouter un cycle"
-          onClick={handleAdd}
-          sx={{
-            position: 'fixed',
-            bottom: 24,
-            right: 24,
-          }}
-        >
-          <AddIcon />
-        </Fab>
+        <Tooltip title={isOffline ? 'Indisponible hors-ligne' : ''}>
+          <span>
+            <Fab
+              color="primary"
+              aria-label="Ajouter un cycle"
+              onClick={handleAdd}
+              disabled={isOffline}
+              sx={{
+                position: 'fixed',
+                bottom: 24,
+                right: 24,
+              }}
+            >
+              <AddIcon />
+            </Fab>
+          </span>
+        </Tooltip>
       )}
 
       <CycleForm

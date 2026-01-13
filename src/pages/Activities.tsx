@@ -15,6 +15,7 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  Tooltip,
   Typography,
   useMediaQuery,
   useTheme,
@@ -29,6 +30,7 @@ import {
   useDeleteActivity,
   useUpdateActivity,
 } from '../hooks/useActivities';
+import { usePWA } from '../hooks/usePWA';
 import { useIsAdmin } from '../hooks/useUserProfile';
 import type { Database } from '../types/database.types';
 
@@ -40,6 +42,7 @@ export function Activities() {
   const updateActivity = useUpdateActivity();
   const deleteActivity = useDeleteActivity();
   const isAdmin = useIsAdmin();
+  const { isOffline } = usePWA();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
@@ -131,9 +134,18 @@ export function Activities() {
       >
         <Typography variant={isMobile ? 'h5' : 'h4'}>Gestion des Activités</Typography>
         {isAdmin && !isMobile && (
-          <Button variant="contained" startIcon={<AddIcon />} onClick={handleAdd}>
-            Ajouter une activité
-          </Button>
+          <Tooltip title={isOffline ? 'Indisponible hors-ligne' : ''}>
+            <span>
+              <Button
+                variant="contained"
+                startIcon={<AddIcon />}
+                onClick={handleAdd}
+                disabled={isOffline}
+              >
+                Ajouter une activité
+              </Button>
+            </span>
+          </Tooltip>
         )}
       </Box>
 
@@ -173,11 +185,13 @@ export function Activities() {
                           icon: <EditIcon />,
                           onClick: () => handleEdit(activity),
                           color: 'primary',
+                          disabled: isOffline,
                         },
                         {
                           icon: <DeleteIcon />,
                           onClick: () => handleDelete(activity),
                           color: 'error',
+                          disabled: isOffline,
                         },
                       ]
                     : undefined
@@ -215,20 +229,30 @@ export function Activities() {
                       </TableCell>
                       {isAdmin && (
                         <TableCell align="right">
-                          <IconButton
-                            size="small"
-                            onClick={() => handleEdit(activity)}
-                            color="primary"
-                          >
-                            <EditIcon />
-                          </IconButton>
-                          <IconButton
-                            size="small"
-                            onClick={() => handleDelete(activity)}
-                            color="error"
-                          >
-                            <DeleteIcon />
-                          </IconButton>
+                          <Tooltip title={isOffline ? 'Indisponible hors-ligne' : ''}>
+                            <span>
+                              <IconButton
+                                size="small"
+                                onClick={() => handleEdit(activity)}
+                                color="primary"
+                                disabled={isOffline}
+                              >
+                                <EditIcon />
+                              </IconButton>
+                            </span>
+                          </Tooltip>
+                          <Tooltip title={isOffline ? 'Indisponible hors-ligne' : ''}>
+                            <span>
+                              <IconButton
+                                size="small"
+                                onClick={() => handleDelete(activity)}
+                                color="error"
+                                disabled={isOffline}
+                              >
+                                <DeleteIcon />
+                              </IconButton>
+                            </span>
+                          </Tooltip>
                         </TableCell>
                       )}
                     </TableRow>
@@ -241,18 +265,23 @@ export function Activities() {
       )}
 
       {isMobile && isAdmin && (
-        <Fab
-          color="primary"
-          aria-label="Ajouter une activité"
-          onClick={handleAdd}
-          sx={{
-            position: 'fixed',
-            bottom: 24,
-            right: 24,
-          }}
-        >
-          <AddIcon />
-        </Fab>
+        <Tooltip title={isOffline ? 'Indisponible hors-ligne' : ''}>
+          <span>
+            <Fab
+              color="primary"
+              aria-label="Ajouter une activité"
+              onClick={handleAdd}
+              disabled={isOffline}
+              sx={{
+                position: 'fixed',
+                bottom: 24,
+                right: 24,
+              }}
+            >
+              <AddIcon />
+            </Fab>
+          </span>
+        </Tooltip>
       )}
 
       <ActivityForm

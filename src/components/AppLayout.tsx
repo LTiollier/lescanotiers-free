@@ -11,8 +11,10 @@ import {
   Spa,
   Terrain,
   Timer,
+  WifiOff,
 } from '@mui/icons-material';
 import {
+  Alert,
   AppBar,
   Box,
   Drawer,
@@ -32,6 +34,7 @@ import {
 import { useState } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { usePWA } from '../hooks/usePWA';
 import { useUserProfile } from '../hooks/useUserProfile';
 import { PWAInstallPrompt } from './PWAInstallPrompt';
 import { PWAUpdateNotification } from './PWAUpdateNotification';
@@ -64,6 +67,7 @@ export function AppLayout() {
   const location = useLocation();
   const { user, signOut } = useAuth();
   const { data: profile, isLoading } = useUserProfile();
+  const { isOffline } = usePWA();
 
   const isAdmin = profile?.role === 'admin';
 
@@ -245,6 +249,12 @@ export function AppLayout() {
         }}
       >
         <Toolbar /> {/* Spacer for fixed AppBar */}
+        {isOffline && (
+          <Alert severity="warning" icon={<WifiOff />} sx={{ mb: 3 }}>
+            Vous êtes hors-ligne. Les modifications sont désactivées jusqu'au rétablissement de la
+            connexion.
+          </Alert>
+        )}
         <Outlet />
       </Box>
 

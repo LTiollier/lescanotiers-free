@@ -26,6 +26,7 @@ import {
   TableHead,
   TableRow,
   TextField,
+  Tooltip,
   Typography,
   useMediaQuery,
   useTheme,
@@ -33,6 +34,7 @@ import {
 import { useState } from 'react';
 import { MobileCard } from '../components/MobileCard';
 import { useAuth } from '../contexts/AuthContext';
+import { usePWA } from '../hooks/usePWA';
 import { useCreateUser, useUpdateUserRole, useUsers } from '../hooks/useUsers';
 import type { Database } from '../types/database.types';
 
@@ -43,6 +45,7 @@ export function UserManagement() {
   const { data: users, isLoading, error } = useUsers();
   const createUser = useCreateUser();
   const updateUserRole = useUpdateUserRole();
+  const { isOffline } = usePWA();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
@@ -162,9 +165,18 @@ export function UserManagement() {
       >
         <Typography variant={isMobile ? 'h5' : 'h4'}>Gestion des Utilisateurs</Typography>
         {!isMobile && (
-          <Button variant="contained" startIcon={<AddIcon />} onClick={handleAdd}>
-            Créer un utilisateur
-          </Button>
+          <Tooltip title={isOffline ? 'Indisponible hors-ligne' : ''}>
+            <span>
+              <Button
+                variant="contained"
+                startIcon={<AddIcon />}
+                onClick={handleAdd}
+                disabled={isOffline}
+              >
+                Créer un utilisateur
+              </Button>
+            </span>
+          </Tooltip>
         )}
       </Box>
 
@@ -227,7 +239,7 @@ export function UserManagement() {
                     icon: <EditIcon />,
                     onClick: () => handleEditRole(user),
                     color: 'primary',
-                    disabled: user.id === currentUser?.id,
+                    disabled: user.id === currentUser?.id || isOffline,
                   },
                 ]}
               />
@@ -283,14 +295,26 @@ export function UserManagement() {
                         {new Date(user.created_at).toLocaleDateString('fr-FR')}
                       </TableCell>
                       <TableCell align="right">
-                        <IconButton
-                          size="small"
-                          onClick={() => handleEditRole(user)}
-                          color="primary"
-                          disabled={user.id === currentUser?.id}
+                        <Tooltip
+                          title={
+                            isOffline
+                              ? 'Indisponible hors-ligne'
+                              : user.id === currentUser?.id
+                                ? 'Vous ne pouvez pas modifier votre propre rôle'
+                                : ''
+                          }
                         >
-                          <EditIcon />
-                        </IconButton>
+                          <span>
+                            <IconButton
+                              size="small"
+                              onClick={() => handleEditRole(user)}
+                              color="primary"
+                              disabled={user.id === currentUser?.id || isOffline}
+                            >
+                              <EditIcon />
+                            </IconButton>
+                          </span>
+                        </Tooltip>
                       </TableCell>
                     </TableRow>
                   ))
@@ -302,18 +326,23 @@ export function UserManagement() {
       )}
 
       {isMobile && (
-        <Fab
-          color="primary"
-          aria-label="Créer un utilisateur"
-          onClick={handleAdd}
-          sx={{
-            position: 'fixed',
-            bottom: 24,
-            right: 24,
-          }}
-        >
-          <AddIcon />
-        </Fab>
+        <Tooltip title={isOffline ? 'Indisponible hors-ligne' : ''}>
+          <span>
+            <Fab
+              color="primary"
+              aria-label="Créer un utilisateur"
+              onClick={handleAdd}
+              disabled={isOffline}
+              sx={{
+                position: 'fixed',
+                bottom: 24,
+                right: 24,
+              }}
+            >
+              <AddIcon />
+            </Fab>
+          </span>
+        </Tooltip>
       )}
 
       {/* Create User Dialog */}

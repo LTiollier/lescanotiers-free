@@ -17,6 +17,7 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  Tooltip,
   Typography,
   useMediaQuery,
   useTheme,
@@ -26,6 +27,7 @@ import { ConfirmDialog } from '../components/ConfirmDialog';
 import { MobileCard } from '../components/MobileCard';
 import { TimeForm } from '../components/TimeForm';
 import { useAuth } from '../contexts/AuthContext';
+import { usePWA } from '../hooks/usePWA';
 import type { TimeWithRelations } from '../hooks/useTimes';
 import { useCreateTime, useDeleteTime, useTimes, useUpdateTime } from '../hooks/useTimes';
 import { useIsAdmin } from '../hooks/useUserProfile';
@@ -37,6 +39,7 @@ export function Times() {
   const deleteTime = useDeleteTime();
   const isAdmin = useIsAdmin();
   const { user } = useAuth();
+  const { isOffline } = usePWA();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
@@ -166,9 +169,18 @@ export function Times() {
       >
         <Typography variant={isMobile ? 'h5' : 'h4'}>Suivi des Temps Passés</Typography>
         {!isMobile && (
-          <Button variant="contained" startIcon={<AddIcon />} onClick={handleAdd}>
-            Ajouter un temps
-          </Button>
+          <Tooltip title={isOffline ? 'Indisponible hors-ligne' : ''}>
+            <span>
+              <Button
+                variant="contained"
+                startIcon={<AddIcon />}
+                onClick={handleAdd}
+                disabled={isOffline}
+              >
+                Ajouter un temps
+              </Button>
+            </span>
+          </Tooltip>
         )}
       </Box>
 
@@ -244,6 +256,7 @@ export function Times() {
                           icon: <EditIcon />,
                           onClick: () => handleEdit(time),
                           color: 'primary',
+                          disabled: isOffline,
                         },
                         ...(isAdmin
                           ? [
@@ -251,6 +264,7 @@ export function Times() {
                                 icon: <DeleteIcon />,
                                 onClick: () => handleDelete(time),
                                 color: 'error' as const,
+                                disabled: isOffline,
                               },
                             ]
                           : []),
@@ -325,21 +339,31 @@ export function Times() {
                       <TableCell align="right">
                         {canEditTime(time) && (
                           <>
-                            <IconButton
-                              size="small"
-                              onClick={() => handleEdit(time)}
-                              color="primary"
-                            >
-                              <EditIcon />
-                            </IconButton>
+                            <Tooltip title={isOffline ? 'Indisponible hors-ligne' : ''}>
+                              <span>
+                                <IconButton
+                                  size="small"
+                                  onClick={() => handleEdit(time)}
+                                  color="primary"
+                                  disabled={isOffline}
+                                >
+                                  <EditIcon />
+                                </IconButton>
+                              </span>
+                            </Tooltip>
                             {isAdmin && (
-                              <IconButton
-                                size="small"
-                                onClick={() => handleDelete(time)}
-                                color="error"
-                              >
-                                <DeleteIcon />
-                              </IconButton>
+                              <Tooltip title={isOffline ? 'Indisponible hors-ligne' : ''}>
+                                <span>
+                                  <IconButton
+                                    size="small"
+                                    onClick={() => handleDelete(time)}
+                                    color="error"
+                                    disabled={isOffline}
+                                  >
+                                    <DeleteIcon />
+                                  </IconButton>
+                                </span>
+                              </Tooltip>
                             )}
                           </>
                         )}
@@ -355,18 +379,23 @@ export function Times() {
 
       {/* FAB pour mobile */}
       {isMobile && (
-        <Fab
-          color="primary"
-          aria-label="Ajouter un temps"
-          onClick={handleAdd}
-          sx={{
-            position: 'fixed',
-            bottom: 24,
-            right: 24,
-          }}
-        >
-          <AddIcon />
-        </Fab>
+        <Tooltip title={isOffline ? 'Indisponible hors-ligne' : ''}>
+          <span>
+            <Fab
+              color="primary"
+              aria-label="Ajouter un temps"
+              onClick={handleAdd}
+              disabled={isOffline}
+              sx={{
+                position: 'fixed',
+                bottom: 24,
+                right: 24,
+              }}
+            >
+              <AddIcon />
+            </Fab>
+          </span>
+        </Tooltip>
       )}
 
       <TimeForm

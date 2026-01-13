@@ -15,6 +15,7 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  Tooltip,
   Typography,
   useMediaQuery,
   useTheme,
@@ -24,6 +25,7 @@ import { ConfirmDialog } from '../components/ConfirmDialog';
 import { MobileCard } from '../components/MobileCard';
 import { ParcelForm } from '../components/ParcelForm';
 import { useCreateParcel, useDeleteParcel, useParcels, useUpdateParcel } from '../hooks/useParcels';
+import { usePWA } from '../hooks/usePWA';
 import { useIsAdmin } from '../hooks/useUserProfile';
 import type { Database } from '../types/database.types';
 
@@ -35,6 +37,7 @@ export function Parcels() {
   const updateParcel = useUpdateParcel();
   const deleteParcel = useDeleteParcel();
   const isAdmin = useIsAdmin();
+  const { isOffline } = usePWA();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
@@ -126,9 +129,18 @@ export function Parcels() {
       >
         <Typography variant={isMobile ? 'h5' : 'h4'}>Gestion des Parcelles</Typography>
         {isAdmin && !isMobile && (
-          <Button variant="contained" startIcon={<AddIcon />} onClick={handleAdd}>
-            Ajouter une parcelle
-          </Button>
+          <Tooltip title={isOffline ? 'Indisponible hors-ligne' : ''}>
+            <span>
+              <Button
+                variant="contained"
+                startIcon={<AddIcon />}
+                onClick={handleAdd}
+                disabled={isOffline}
+              >
+                Ajouter une parcelle
+              </Button>
+            </span>
+          </Tooltip>
         )}
       </Box>
 
@@ -168,11 +180,13 @@ export function Parcels() {
                           icon: <EditIcon />,
                           onClick: () => handleEdit(parcel),
                           color: 'primary',
+                          disabled: isOffline,
                         },
                         {
                           icon: <DeleteIcon />,
                           onClick: () => handleDelete(parcel),
                           color: 'error',
+                          disabled: isOffline,
                         },
                       ]
                     : undefined
@@ -210,20 +224,30 @@ export function Parcels() {
                       </TableCell>
                       {isAdmin && (
                         <TableCell align="right">
-                          <IconButton
-                            size="small"
-                            onClick={() => handleEdit(parcel)}
-                            color="primary"
-                          >
-                            <EditIcon />
-                          </IconButton>
-                          <IconButton
-                            size="small"
-                            onClick={() => handleDelete(parcel)}
-                            color="error"
-                          >
-                            <DeleteIcon />
-                          </IconButton>
+                          <Tooltip title={isOffline ? 'Indisponible hors-ligne' : ''}>
+                            <span>
+                              <IconButton
+                                size="small"
+                                onClick={() => handleEdit(parcel)}
+                                color="primary"
+                                disabled={isOffline}
+                              >
+                                <EditIcon />
+                              </IconButton>
+                            </span>
+                          </Tooltip>
+                          <Tooltip title={isOffline ? 'Indisponible hors-ligne' : ''}>
+                            <span>
+                              <IconButton
+                                size="small"
+                                onClick={() => handleDelete(parcel)}
+                                color="error"
+                                disabled={isOffline}
+                              >
+                                <DeleteIcon />
+                              </IconButton>
+                            </span>
+                          </Tooltip>
                         </TableCell>
                       )}
                     </TableRow>
@@ -236,18 +260,21 @@ export function Parcels() {
       )}
 
       {isMobile && isAdmin && (
-        <Fab
-          color="primary"
-          aria-label="Ajouter une parcelle"
-          onClick={handleAdd}
-          sx={{
-            position: 'fixed',
-            bottom: 24,
-            right: 24,
-          }}
-        >
-          <AddIcon />
-        </Fab>
+        <Tooltip title={isOffline ? 'Indisponible hors-ligne' : ''}>
+          <Fab
+            color="primary"
+            aria-label="Ajouter une parcelle"
+            onClick={handleAdd}
+            disabled={isOffline}
+            sx={{
+              position: 'fixed',
+              bottom: 24,
+              right: 24,
+            }}
+          >
+            <AddIcon />
+          </Fab>
+        </Tooltip>
       )}
 
       <ParcelForm

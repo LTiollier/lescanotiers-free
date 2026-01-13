@@ -16,6 +16,7 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  Tooltip,
   Typography,
   useMediaQuery,
   useTheme,
@@ -30,6 +31,7 @@ import {
   useReplaceVegetableImage,
   useUploadVegetableImage,
 } from '../hooks/useImageUpload';
+import { usePWA } from '../hooks/usePWA';
 import { useIsAdmin } from '../hooks/useUserProfile';
 import { useVegetableCategories } from '../hooks/useVegetableCategories';
 import {
@@ -52,6 +54,7 @@ export function Vegetables() {
   const replaceImage = useReplaceVegetableImage();
   const deleteImage = useDeleteVegetableImage();
   const isAdmin = useIsAdmin();
+  const { isOffline } = usePWA();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
@@ -186,9 +189,18 @@ export function Vegetables() {
       >
         <Typography variant={isMobile ? 'h5' : 'h4'}>Gestion des Légumes</Typography>
         {isAdmin && !isMobile && (
-          <Button variant="contained" startIcon={<AddIcon />} onClick={handleAdd}>
-            Ajouter un légume
-          </Button>
+          <Tooltip title={isOffline ? 'Indisponible hors-ligne' : ''}>
+            <span>
+              <Button
+                variant="contained"
+                startIcon={<AddIcon />}
+                onClick={handleAdd}
+                disabled={isOffline}
+              >
+                Ajouter un légume
+              </Button>
+            </span>
+          </Tooltip>
         )}
       </Box>
 
@@ -253,11 +265,13 @@ export function Vegetables() {
                             icon: <EditIcon />,
                             onClick: () => handleEdit(vegetable),
                             color: 'primary',
+                            disabled: isOffline,
                           },
                           {
                             icon: <DeleteIcon />,
                             onClick: () => handleDelete(vegetable),
                             color: 'error',
+                            disabled: isOffline,
                           },
                         ]
                       : undefined
@@ -321,20 +335,30 @@ export function Vegetables() {
                         </TableCell>
                         {isAdmin && (
                           <TableCell align="right">
-                            <IconButton
-                              size="small"
-                              onClick={() => handleEdit(vegetable)}
-                              color="primary"
-                            >
-                              <EditIcon />
-                            </IconButton>
-                            <IconButton
-                              size="small"
-                              onClick={() => handleDelete(vegetable)}
-                              color="error"
-                            >
-                              <DeleteIcon />
-                            </IconButton>
+                            <Tooltip title={isOffline ? 'Indisponible hors-ligne' : ''}>
+                              <span>
+                                <IconButton
+                                  size="small"
+                                  onClick={() => handleEdit(vegetable)}
+                                  color="primary"
+                                  disabled={isOffline}
+                                >
+                                  <EditIcon />
+                                </IconButton>
+                              </span>
+                            </Tooltip>
+                            <Tooltip title={isOffline ? 'Indisponible hors-ligne' : ''}>
+                              <span>
+                                <IconButton
+                                  size="small"
+                                  onClick={() => handleDelete(vegetable)}
+                                  color="error"
+                                  disabled={isOffline}
+                                >
+                                  <DeleteIcon />
+                                </IconButton>
+                              </span>
+                            </Tooltip>
                           </TableCell>
                         )}
                       </TableRow>
@@ -348,18 +372,21 @@ export function Vegetables() {
       )}
 
       {isMobile && isAdmin && (
-        <Fab
-          color="primary"
-          aria-label="Ajouter un légume"
-          onClick={handleAdd}
-          sx={{
-            position: 'fixed',
-            bottom: 24,
-            right: 24,
-          }}
-        >
-          <AddIcon />
-        </Fab>
+        <Tooltip title={isOffline ? 'Indisponible hors-ligne' : ''}>
+          <Fab
+            color="primary"
+            aria-label="Ajouter un légume"
+            onClick={handleAdd}
+            disabled={isOffline}
+            sx={{
+              position: 'fixed',
+              bottom: 24,
+              right: 24,
+            }}
+          >
+            <AddIcon />
+          </Fab>
+        </Tooltip>
       )}
 
       <VegetableForm
