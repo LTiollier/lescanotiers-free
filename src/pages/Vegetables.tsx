@@ -253,10 +253,6 @@ export function Vegetables() {
                         '-'
                       ),
                     },
-                    {
-                      label: 'Date de création',
-                      value: new Date(vegetable.created_at).toLocaleDateString('fr-FR'),
-                    },
                   ]}
                   actions={
                     isAdmin
@@ -290,14 +286,13 @@ export function Vegetables() {
                   <TableCell width="80">Image</TableCell>
                   <TableCell>Nom</TableCell>
                   <TableCell>Catégorie</TableCell>
-                  <TableCell align="right">Date de création</TableCell>
                   {isAdmin && <TableCell align="right">Actions</TableCell>}
                 </TableRow>
               </TableHead>
               <TableBody>
                 {vegetables?.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={5} align="center">
+                    <TableCell colSpan={isAdmin ? 4 : 3} align="center">
                       <Typography variant="body2" color="text.secondary" sx={{ py: 4 }}>
                         Aucun légume. Cliquez sur "Ajouter un légume" pour commencer.
                       </Typography>
@@ -329,9 +324,6 @@ export function Vegetables() {
                               -
                             </Typography>
                           )}
-                        </TableCell>
-                        <TableCell align="right">
-                          {new Date(vegetable.created_at).toLocaleDateString('fr-FR')}
                         </TableCell>
                         {isAdmin && (
                           <TableCell align="right">

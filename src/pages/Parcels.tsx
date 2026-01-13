@@ -168,10 +168,6 @@ export function Parcels() {
                     value: parcel.name,
                     emphasized: true,
                   },
-                  {
-                    label: 'Date de création',
-                    value: new Date(parcel.created_at).toLocaleDateString('fr-FR'),
-                  },
                 ]}
                 actions={
                   isAdmin
@@ -202,14 +198,13 @@ export function Parcels() {
               <TableHead>
                 <TableRow>
                   <TableCell>Nom</TableCell>
-                  <TableCell align="right">Date de création</TableCell>
                   {isAdmin && <TableCell align="right">Actions</TableCell>}
                 </TableRow>
               </TableHead>
               <TableBody>
                 {parcels?.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={3} align="center">
+                    <TableCell colSpan={isAdmin ? 2 : 1} align="center">
                       <Typography variant="body2" color="text.secondary" sx={{ py: 4 }}>
                         Aucune parcelle. Cliquez sur "Ajouter une parcelle" pour commencer.
                       </Typography>
@@ -219,9 +214,6 @@ export function Parcels() {
                   parcels?.map((parcel) => (
                     <TableRow key={parcel.id}>
                       <TableCell>{parcel.name}</TableCell>
-                      <TableCell align="right">
-                        {new Date(parcel.created_at).toLocaleDateString('fr-FR')}
-                      </TableCell>
                       {isAdmin && (
                         <TableCell align="right">
                           <Tooltip title={isOffline ? 'Indisponible hors-ligne' : ''}>

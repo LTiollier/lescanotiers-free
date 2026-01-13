@@ -173,10 +173,6 @@ export function Activities() {
                     value: activity.name,
                     emphasized: true,
                   },
-                  {
-                    label: 'Date de création',
-                    value: new Date(activity.created_at).toLocaleDateString('fr-FR'),
-                  },
                 ]}
                 actions={
                   isAdmin
@@ -207,14 +203,13 @@ export function Activities() {
               <TableHead>
                 <TableRow>
                   <TableCell>Nom</TableCell>
-                  <TableCell align="right">Date de création</TableCell>
                   {isAdmin && <TableCell align="right">Actions</TableCell>}
                 </TableRow>
               </TableHead>
               <TableBody>
                 {activities?.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={3} align="center">
+                    <TableCell colSpan={isAdmin ? 2 : 1} align="center">
                       <Typography variant="body2" color="text.secondary" sx={{ py: 4 }}>
                         Aucune activité. Cliquez sur "Ajouter une activité" pour commencer.
                       </Typography>
@@ -224,9 +219,6 @@ export function Activities() {
                   activities?.map((activity) => (
                     <TableRow key={activity.id}>
                       <TableCell>{activity.name}</TableCell>
-                      <TableCell align="right">
-                        {new Date(activity.created_at).toLocaleDateString('fr-FR')}
-                      </TableCell>
                       {isAdmin && (
                         <TableCell align="right">
                           <Tooltip title={isOffline ? 'Indisponible hors-ligne' : ''}>
