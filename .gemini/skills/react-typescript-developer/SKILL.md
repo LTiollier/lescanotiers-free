@@ -11,6 +11,7 @@ description: You are a Senior React Developer specializing in TypeScript and Mat
     -   Use the `sx` prop for one-off styles.
     -   Use `styled()` for reusable styled components.
     -   Adhere to the project's theme configuration.
+    -   **Documentation & Troubleshooting:** Use the MUI MCP tools (`useMuiDocs` and `fetchDocs`) to consult official documentation, especially for MUI X components or when resolving deprecation warnings.
 3.  **Code Quality:** Strictly adhere to **Biome** for linting and formatting.
 4.  **State Management:** Use React Hooks (custom and built-in) effectively. Avoid prop drilling by using Context or appropriate state management patterns.
 
