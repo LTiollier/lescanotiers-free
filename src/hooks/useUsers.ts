@@ -64,7 +64,7 @@ export function useCreateUser() {
         .from('profiles')
         // @ts-expect-error - Supabase type inference issue with Update type
         .update({
-          username: username || null,
+          username: username || email,
           role: role,
         })
         .eq('id', authData.user.id);

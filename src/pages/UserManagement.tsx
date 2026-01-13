@@ -194,14 +194,18 @@ export function UserManagement() {
                         {user.id === currentUser?.id && (
                           <Chip label="Vous" size="small" color="primary" />
                         )}
-                        <Typography variant="body2">{user.id}</Typography>
+                        <Typography variant="body2">{user.username || "Pas d'email"}</Typography>
                       </Stack>
                     ),
                     emphasized: true,
                   },
                   {
-                    label: "Nom d'utilisateur",
-                    value: user.username || '-',
+                    label: 'ID',
+                    value: (
+                      <Typography variant="caption" sx={{ fontFamily: 'monospace' }}>
+                        {user.id}
+                      </Typography>
+                    ),
                   },
                   {
                     label: 'Rôle',
@@ -237,7 +241,7 @@ export function UserManagement() {
               <TableHead>
                 <TableRow>
                   <TableCell>Email</TableCell>
-                  <TableCell>Nom d'utilisateur</TableCell>
+                  <TableCell>ID Utilisateur</TableCell>
                   <TableCell>Rôle</TableCell>
                   <TableCell align="right">Date de création</TableCell>
                   <TableCell align="right">Actions</TableCell>
@@ -256,12 +260,18 @@ export function UserManagement() {
                   users?.map((user) => (
                     <TableRow key={user.id}>
                       <TableCell>
-                        {user.id === currentUser?.id && (
-                          <Chip label="Vous" size="small" color="primary" sx={{ mr: 1 }} />
-                        )}
-                        {user.id}
+                        <Stack direction="row" spacing={1} alignItems="center">
+                          {user.id === currentUser?.id && (
+                            <Chip label="Vous" size="small" color="primary" />
+                          )}
+                          <Typography variant="body2">{user.username || "Pas d'email"}</Typography>
+                        </Stack>
                       </TableCell>
-                      <TableCell>{user.username || '-'}</TableCell>
+                      <TableCell>
+                        <Typography variant="caption" sx={{ fontFamily: 'monospace' }}>
+                          {user.id}
+                        </Typography>
+                      </TableCell>
                       <TableCell>
                         <Chip
                           label={user.role === 'admin' ? 'Administrateur' : 'Employé'}
