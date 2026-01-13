@@ -25,18 +25,21 @@ export interface Database {
           id: string;
           username: string | null;
           role: string;
+          display_name: string | null;
           created_at: string;
         };
         Insert: {
           id: string;
           username?: string | null;
           role?: string;
+          display_name?: string | null;
           created_at?: string;
         };
         Update: {
           id?: string;
           username?: string | null;
           role?: string;
+          display_name?: string | null;
           created_at?: string;
         };
       };

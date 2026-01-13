@@ -66,6 +66,7 @@ export function UserManagement() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [username, setUsername] = useState('');
+  const [displayName, setDisplayName] = useState('');
   const [role, setRole] = useState<'admin' | 'employee'>('employee');
   const [newRole, setNewRole] = useState<'admin' | 'employee'>('employee');
 
@@ -73,6 +74,7 @@ export function UserManagement() {
     setEmail('');
     setPassword('');
     setUsername('');
+    setDisplayName('');
     setRole('employee');
     setFormOpen(true);
   };
@@ -100,6 +102,7 @@ export function UserManagement() {
         email,
         password,
         username: username || undefined,
+        displayName: displayName || undefined,
         role,
       });
       setSnackbar({
@@ -200,16 +203,22 @@ export function UserManagement() {
                 key={user.id}
                 fields={[
                   {
-                    label: 'Email',
+                    label: 'Nom',
                     value: (
                       <Stack direction="row" spacing={1} alignItems="center">
                         {user.id === currentUser?.id && (
                           <Chip label="Vous" size="small" color="primary" />
                         )}
-                        <Typography variant="body2">{user.username || "Pas d'email"}</Typography>
+                        <Typography variant="body2">
+                          {user.display_name || user.username || 'Utilisateur'}
+                        </Typography>
                       </Stack>
                     ),
                     emphasized: true,
+                  },
+                  {
+                    label: 'Email',
+                    value: user.username || "Pas d'email",
                   },
                   {
                     label: 'ID',
@@ -252,6 +261,7 @@ export function UserManagement() {
             <Table>
               <TableHead>
                 <TableRow>
+                  <TableCell>Nom</TableCell>
                   <TableCell>Email</TableCell>
                   <TableCell>ID Utilisateur</TableCell>
                   <TableCell>Rôle</TableCell>
@@ -262,7 +272,7 @@ export function UserManagement() {
               <TableBody>
                 {users?.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={5} align="center">
+                    <TableCell colSpan={6} align="center">
                       <Typography variant="body2" color="text.secondary" sx={{ py: 4 }}>
                         Aucun utilisateur. Cliquez sur "Créer un utilisateur" pour commencer.
                       </Typography>
@@ -276,8 +286,11 @@ export function UserManagement() {
                           {user.id === currentUser?.id && (
                             <Chip label="Vous" size="small" color="primary" />
                           )}
-                          <Typography variant="body2">{user.username || "Pas d'email"}</Typography>
+                          <Typography variant="body2">{user.display_name || '—'}</Typography>
                         </Stack>
+                      </TableCell>
+                      <TableCell>
+                        <Typography variant="body2">{user.username || "Pas d'email"}</Typography>
                       </TableCell>
                       <TableCell>
                         <Typography variant="caption" sx={{ fontFamily: 'monospace' }}>
@@ -376,11 +389,18 @@ export function UserManagement() {
                 helperText="Au moins 6 caractères"
               />
               <TextField
+                label="Nom d'affichage"
+                value={displayName}
+                onChange={(e) => setDisplayName(e.target.value)}
+                fullWidth
+                helperText="Optionnel"
+              />
+              <TextField
                 label="Nom d'utilisateur"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 fullWidth
-                helperText="Optionnel"
+                helperText="Optionnel (pour la connexion si différent de l'email)"
               />
               <FormControl fullWidth>
                 <InputLabel>Rôle</InputLabel>
