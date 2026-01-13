@@ -1,4 +1,3 @@
-import { Spa } from '@mui/icons-material';
 import {
   Alert,
   Box,
@@ -48,7 +47,12 @@ export function Login() {
         }}
       >
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, justifyContent: 'center' }}>
-          <Spa sx={{ fontSize: 50, color: 'primary.main' }} />
+          <Box
+            component="img"
+            src="/logo.jpg"
+            alt="Les Canotiers Logo"
+            sx={{ height: 50, borderRadius: 1 }}
+          />
           <Typography variant="h3" component="h1" color="primary">
             Les Canotiers
           </Typography>
