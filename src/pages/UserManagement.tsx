@@ -65,7 +65,6 @@ export function UserManagement() {
   // Form state
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [username, setUsername] = useState('');
   const [displayName, setDisplayName] = useState('');
   const [role, setRole] = useState<'admin' | 'employee'>('employee');
   const [newRole, setNewRole] = useState<'admin' | 'employee'>('employee');
@@ -73,7 +72,6 @@ export function UserManagement() {
   const handleAdd = () => {
     setEmail('');
     setPassword('');
-    setUsername('');
     setDisplayName('');
     setRole('employee');
     setFormOpen(true);
@@ -88,6 +86,15 @@ export function UserManagement() {
   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    if (!displayName.trim()) {
+      setSnackbar({
+        open: true,
+        message: "Le nom d'affichage est obligatoire",
+        severity: 'error',
+      });
+      return;
+    }
+
     if (password.length < 6) {
       setSnackbar({
         open: true,
@@ -101,8 +108,8 @@ export function UserManagement() {
       await createUser.mutateAsync({
         email,
         password,
-        username: username || undefined,
-        displayName: displayName || undefined,
+        username: undefined,
+        displayName,
         role,
       });
       setSnackbar({
@@ -392,15 +399,8 @@ export function UserManagement() {
                 label="Nom d'affichage"
                 value={displayName}
                 onChange={(e) => setDisplayName(e.target.value)}
+                required
                 fullWidth
-                helperText="Optionnel"
-              />
-              <TextField
-                label="Nom d'utilisateur"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                fullWidth
-                helperText="Optionnel (pour la connexion si différent de l'email)"
               />
               <FormControl fullWidth>
                 <InputLabel>Rôle</InputLabel>

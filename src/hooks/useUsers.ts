@@ -7,8 +7,8 @@ type Profile = Database['public']['Tables']['profiles']['Row'];
 interface CreateUserParams {
   email: string;
   password: string;
+  displayName: string;
   username?: string;
-  displayName?: string;
   role?: 'admin' | 'employee';
 }
 
