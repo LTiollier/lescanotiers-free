@@ -116,8 +116,10 @@ export function CycleForm({ open, onClose, onSubmit, cycle, isLoading }: CycleFo
             value={startsAt}
             onChange={(e) => setStartsAt(e.target.value)}
             disabled={isLoading}
-            InputLabelProps={{
-              shrink: true,
+            slotProps={{
+              inputLabel: {
+                shrink: true,
+              },
             }}
           />
 
@@ -130,8 +132,10 @@ export function CycleForm({ open, onClose, onSubmit, cycle, isLoading }: CycleFo
             value={endsAt}
             onChange={(e) => setEndsAt(e.target.value)}
             disabled={isLoading}
-            InputLabelProps={{
-              shrink: true,
+            slotProps={{
+              inputLabel: {
+                shrink: true,
+              },
             }}
           />
         </DialogContent>

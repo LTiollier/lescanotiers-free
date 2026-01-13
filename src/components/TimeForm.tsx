@@ -398,7 +398,9 @@ export function TimeForm({ open, onClose, onSubmit, time, isLoading }: TimeFormP
                 type="number"
                 value={quantity}
                 onChange={(e) => setQuantity(e.target.value ? Number(e.target.value) : '')}
-                inputProps={{ min: 0, step: 0.1 }}
+                slotProps={{
+                  htmlInput: { min: 0, step: 0.1 },
+                }}
                 fullWidth
                 sx={{
                   '& .MuiInputBase-root': {
