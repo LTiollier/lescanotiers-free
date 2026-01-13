@@ -7,6 +7,7 @@ export default defineConfig({
   plugins: [
     react(),
     VitePWA({
+      // ... existing PWA config
       registerType: 'autoUpdate',
       includeAssets: ['favicon.ico', 'apple-icon.png', 'logo.jpg'],
       manifest: {
@@ -87,4 +88,21 @@ export default defineConfig({
       },
     }),
   ],
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'vendor-mui': [
+            '@mui/material',
+            '@mui/icons-material',
+            '@mui/x-date-pickers',
+            '@emotion/react',
+            '@emotion/styled',
+          ],
+          'vendor-supabase': ['@supabase/supabase-js'],
+          'vendor-utils': ['dayjs', '@tanstack/react-query'],
+        },
+      },
+    },
+  },
 });

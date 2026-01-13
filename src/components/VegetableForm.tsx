@@ -16,11 +16,14 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
-import { useEffect, useState } from 'react';
+import { lazy, Suspense, useEffect, useState } from 'react';
 import { useVegetableCategories } from '../hooks/useVegetableCategories';
 import type { Database } from '../types/database.types';
-import { AIImageGenerationDialog } from './AIImageGenerationDialog';
 import { VegetableAvatar } from './VegetableAvatar';
+
+const AIImageGenerationDialog = lazy(() =>
+  import('./AIImageGenerationDialog').then((m) => ({ default: m.AIImageGenerationDialog })),
+);
 
 type Vegetable = Database['public']['Tables']['vegetables']['Row'];
 
@@ -298,12 +301,14 @@ export function VegetableForm({
       </form>
 
       {/* AI Image Generation Dialog */}
-      <AIImageGenerationDialog
-        open={aiDialogOpen}
-        onClose={handleCloseAIDialog}
-        vegetableName={name}
-        onImageGenerated={handleAIImageGenerated}
-      />
+      <Suspense fallback={null}>
+        <AIImageGenerationDialog
+          open={aiDialogOpen}
+          onClose={handleCloseAIDialog}
+          vegetableName={name}
+          onImageGenerated={handleAIImageGenerated}
+        />
+      </Suspense>
     </Dialog>
   );
 }
