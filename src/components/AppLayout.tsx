@@ -8,7 +8,6 @@ import {
   Menu as MenuIcon,
   People,
   Settings,
-  Spa,
   Terrain,
   Timer,
   WifiOff,
@@ -102,7 +101,12 @@ export function AppLayout() {
   const drawer = (
     <Box>
       <Toolbar sx={{ display: 'flex', alignItems: 'center', gap: 1, px: 2 }}>
-        <Spa sx={{ color: 'primary.main' }} />
+        <Box
+          component="img"
+          src="/logo.jpg"
+          alt="Les Canotiers"
+          sx={{ width: 32, height: 32, borderRadius: '20%' }}
+        />
         <Typography variant="h6" color="primary" noWrap>
           Les Canotiers
         </Typography>
