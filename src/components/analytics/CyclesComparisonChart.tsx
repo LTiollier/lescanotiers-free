@@ -1,11 +1,13 @@
-import { Box, CircularProgress, Typography } from '@mui/material';
 import { BarChart } from '@mui/x-charts/BarChart';
-import _ from 'lodash';
+import { Box, CircularProgress, Typography, useMediaQuery, useTheme } from '@mui/material';
+import { useTimes } from '../../hooks/useTimes';
 import { useActivities } from '../../hooks/useActivities';
 import { useCycles } from '../../hooks/useCycles';
-import { useTimes } from '../../hooks/useTimes';
+import _ from 'lodash';
 
 export function CyclesComparisonChart() {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const { data: times, isLoading: loadingTimes } = useTimes();
   const { data: activities, isLoading: loadingActivities } = useActivities();
   const { data: cycles, isLoading: loadingCycles } = useCycles();
@@ -53,30 +55,38 @@ export function CyclesComparisonChart() {
   const xAxisData = chartCycles.map((c) => {
     const vegName = c.vegetables?.name || 'Inconnu';
     const parcelName = c.parcels?.name || 'Inconnu';
-    return `${vegName} (${parcelName})`;
+    return isMobile ? vegName : `${vegName} (${parcelName})`;
   });
 
   return (
-    <Box sx={{ width: '100%', height: 400, mt: 2 }}>
+    <Box sx={{ width: '100%', height: isMobile ? 450 : 400, mt: 2 }}>
       <Typography variant="h6" gutterBottom align="center">
-        Comparaison du temps investi par cycle (en heures)
+        Temps investi par cycle (h)
       </Typography>
       <BarChart
         xAxis={[
           {
             scaleType: 'band',
             data: xAxisData,
-            label: 'Cycles (Légume - Parcelle)',
+            label: isMobile ? '' : 'Cycles (Légume - Parcelle)',
           },
         ]}
         series={series}
-        height={350}
-        margin={{ top: 20, right: 30, left: 40, bottom: 60 }}
+        height={isMobile ? 400 : 350}
+        margin={{
+          top: 20,
+          right: 10,
+          left: 40,
+          bottom: isMobile ? 100 : 60,
+        }}
         slotProps={{
           legend: {
             direction: 'row',
             position: { vertical: 'bottom', horizontal: 'middle' },
             padding: 0,
+            labelStyle: {
+              fontSize: isMobile ? 10 : 12,
+            },
           } as never,
         }}
       />
