@@ -77,7 +77,14 @@ export function CyclesComparisonChart() {
       data: activityData,
       label: activity.name,
       stack: 'total',
+      valueFormatter: (value: number | null) => (value ? `${value.toFixed(1)}h` : '0h'),
     };
+  });
+
+  // 4. Calculate totals for bar labels
+  const totalsPerCycle = chartCycles.map((cycle) => {
+    const cycleTimes = dataByCycle[cycle.id] || [];
+    return _.sumBy(cycleTimes, 'minutes') / 60;
   });
 
   const xAxisData = chartCycles.map((c) => {
@@ -108,6 +115,9 @@ export function CyclesComparisonChart() {
           >
             {activeCycles.map((cycle) => {
               const isFinished = new Date(cycle.ends_at) < new Date();
+              const cycleTimes = dataByCycle[cycle.id] || [];
+              const totalHours = _.sumBy(cycleTimes, 'minutes') / 60;
+
               return (
                 <MenuItem key={cycle.id} value={cycle.id}>
                   <Checkbox checked={selectedCycleIds.indexOf(cycle.id) > -1} />
@@ -123,7 +133,7 @@ export function CyclesComparisonChart() {
                   />
                   <ListItemText
                     primary={`${cycle.vegetables?.name} (${cycle.parcels?.name})`}
-                    secondary={new Date(cycle.starts_at).toLocaleDateString()}
+                    secondary={`${new Date(cycle.starts_at).toLocaleDateString()} • Total: ${totalHours.toFixed(1)}h`}
                   />
                 </MenuItem>
               );
@@ -141,7 +151,23 @@ export function CyclesComparisonChart() {
               label: isMobile ? '' : 'Cycles',
             },
           ]}
-          series={series}
+          series={series.map((s) => ({
+            ...s,
+            label: s.label,
+          }))}
+          barLabel={(item) => {
+            // Only show the label for the top-most item in the stack
+            const seriesIndex = series.findIndex((s) => s.label === item.seriesId);
+            const isLastWithData = series
+              .slice(seriesIndex + 1)
+              .every((s) => s.data[item.dataIndex] === 0);
+
+            const total = totalsPerCycle[item.dataIndex];
+            if (isLastWithData && total !== undefined && total > 0) {
+              return `${total.toFixed(1)}h`;
+            }
+            return null;
+          }}
           height={isMobile ? 400 : 350}
           margin={{
             top: 20,
