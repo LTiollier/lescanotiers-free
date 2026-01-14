@@ -221,10 +221,6 @@ export function UserManagement() {
                     emphasized: true,
                   },
                   {
-                    label: 'Email',
-                    value: user.username || "Pas d'email",
-                  },
-                  {
                     label: 'ID',
                     value: (
                       <Typography variant="caption" sx={{ fontFamily: 'monospace' }}>
@@ -266,7 +262,6 @@ export function UserManagement() {
               <TableHead>
                 <TableRow>
                   <TableCell>Nom</TableCell>
-                  <TableCell>Email</TableCell>
                   <TableCell>ID Utilisateur</TableCell>
                   <TableCell>Rôle</TableCell>
                   <TableCell align="right">Date de création</TableCell>
@@ -292,9 +287,6 @@ export function UserManagement() {
                           )}
                           <Typography variant="body2">{user.username || '—'}</Typography>
                         </Stack>
-                      </TableCell>
-                      <TableCell>
-                        <Typography variant="body2">{user.username || "Pas d'email"}</Typography>
                       </TableCell>
                       <TableCell>
                         <Typography variant="caption" sx={{ fontFamily: 'monospace' }}>
