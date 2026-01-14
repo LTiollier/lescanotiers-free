@@ -152,11 +152,24 @@ export function TimeForm({ open, onClose, onSubmit, time, isLoading }: TimeFormP
     if (step === 'cycle') return null;
 
     return (
-      <Box sx={{ mb: 3, p: 2, bgcolor: 'grey.50', borderRadius: 1, border: '1px solid', borderColor: 'grey.200' }}>
-        <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 1, fontWeight: 'bold', textTransform: 'uppercase' }}>
+      <Box
+        sx={{
+          mb: 3,
+          p: 2,
+          bgcolor: 'grey.50',
+          borderRadius: 1,
+          border: '1px solid',
+          borderColor: 'grey.200',
+        }}
+      >
+        <Typography
+          variant="caption"
+          color="text.secondary"
+          sx={{ display: 'block', mb: 1, fontWeight: 'bold', textTransform: 'uppercase' }}
+        >
           Résumé de la saisie
         </Typography>
-        
+
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
           {/* Cycle */}
           {selectedCycle && (
@@ -168,7 +181,8 @@ export function TimeForm({ open, onClose, onSubmit, time, isLoading }: TimeFormP
                 sx={{ width: 20, height: 20 }}
               />
               <Typography variant="body2">
-                <strong>Cycle :</strong> {selectedCycle.vegetables?.name} ({selectedCycle.parcels?.name})
+                <strong>Cycle :</strong> {selectedCycle.vegetables?.name} (
+                {selectedCycle.parcels?.name})
               </Typography>
             </Box>
           )}
@@ -181,16 +195,17 @@ export function TimeForm({ open, onClose, onSubmit, time, isLoading }: TimeFormP
           )}
 
           {/* Date */}
-          {step !== 'activity' && date && (
+          {(step === 'duration' || step === 'quantity') && date && (
             <Typography variant="body2">
               <strong>Date :</strong> {date.format('DD/MM/YYYY')}
             </Typography>
           )}
 
           {/* Duration */}
-          {(step === 'quantity') && minutes && (
+          {step === 'quantity' && minutes && (
             <Typography variant="body2">
-              <strong>Durée :</strong> {Math.floor(minutes / 60)}h{minutes % 60 > 0 ? (minutes % 60).toString().padStart(2, '0') : ''}
+              <strong>Durée :</strong> {Math.floor(minutes / 60)}h
+              {minutes % 60 > 0 ? (minutes % 60).toString().padStart(2, '0') : ''}
             </Typography>
           )}
         </Box>
@@ -209,477 +224,276 @@ export function TimeForm({ open, onClose, onSubmit, time, isLoading }: TimeFormP
         </Box>
       </DialogTitle>
 
-            <DialogContent>
+      <DialogContent>
+        {renderSummary()}
 
-              {renderSummary()}
+        {/* Step 1: Cycle Selection */}
 
-      
+        {step === 'cycle' && (
+          <Box
+            sx={{
+              display: 'grid',
 
-              {/* Step 1: Cycle Selection */}
+              gridTemplateColumns: { xs: 'repeat(2, 1fr)', sm: 'repeat(3, 1fr)' },
 
-              {step === 'cycle' && (
+              gap: 2,
 
-                <Box
-
+              pt: 1,
+            }}
+          >
+            {cyclesLoading ? (
+              <Box sx={{ gridColumn: '1 / -1', display: 'flex', justifyContent: 'center', py: 4 }}>
+                <CircularProgress />
+              </Box>
+            ) : (
+              activeCycles?.map((cycle) => (
+                <Card
+                  key={cycle.id}
+                  elevation={cycleId === cycle.id ? 4 : 1}
                   sx={{
+                    border: cycleId === cycle.id ? 2 : 0,
 
-                    display: 'grid',
-
-                    gridTemplateColumns: { xs: 'repeat(2, 1fr)', sm: 'repeat(3, 1fr)' },
-
-                    gap: 2,
-
-                    pt: 1,
-
+                    borderColor: 'primary.main',
                   }}
-
                 >
+                  <CardActionArea
+                    onClick={() => handleCycleSelect(cycle.id)}
+                    sx={{
+                      p: 2,
 
-                  {cyclesLoading ? (
+                      height: '100%',
 
-                    <Box sx={{ gridColumn: '1 / -1', display: 'flex', justifyContent: 'center', py: 4 }}>
+                      display: 'flex',
 
-                      <CircularProgress />
+                      flexDirection: 'column',
 
+                      alignItems: 'center',
+
+                      gap: 1.5,
+
+                      minHeight: 140,
+                    }}
+                  >
+                    <VegetableAvatar
+                      imageUrl={cycle.vegetables?.image_url}
+                      name={cycle.vegetables?.name || 'N/A'}
+                      size="large"
+                      sx={{ width: 64, height: 64 }}
+                    />
+
+                    <Box sx={{ textAlign: 'center' }}>
+                      <Typography variant="body1" fontWeight="medium">
+                        {cycle.vegetables?.name || 'N/A'}
+                      </Typography>
+
+                      <Typography variant="caption" color="text.secondary">
+                        {cycle.parcels?.name || 'N/A'}
+                      </Typography>
                     </Box>
 
-                  ) : (
-
-                    activeCycles?.map((cycle) => (
-
-                      <Card
-
-                        key={cycle.id}
-
-                        elevation={cycleId === cycle.id ? 4 : 1}
-
-                        sx={{
-
-                          border: cycleId === cycle.id ? 2 : 0,
-
-                          borderColor: 'primary.main',
-
-                        }}
-
-                      >
-
-                        <CardActionArea
-
-                          onClick={() => handleCycleSelect(cycle.id)}
-
-                          sx={{
-
-                            p: 2,
-
-                            height: '100%',
-
-                            display: 'flex',
-
-                            flexDirection: 'column',
-
-                            alignItems: 'center',
-
-                            gap: 1.5,
-
-                            minHeight: 140,
-
-                          }}
-
-                        >
-
-                          <VegetableAvatar
-
-                            imageUrl={cycle.vegetables?.image_url}
-
-                            name={cycle.vegetables?.name || 'N/A'}
-
-                            size="large"
-
-                            sx={{ width: 64, height: 64 }}
-
-                          />
-
-                          <Box sx={{ textAlign: 'center' }}>
-
-                            <Typography variant="body1" fontWeight="medium">
-
-                              {cycle.vegetables?.name || 'N/A'}
-
-                            </Typography>
-
-                            <Typography variant="caption" color="text.secondary">
-
-                              {cycle.parcels?.name || 'N/A'}
-
-                            </Typography>
-
-                          </Box>
-
-                          {cycleId === cycle.id && (
-
-                            <Check color="primary" sx={{ position: 'absolute', top: 8, right: 8 }} />
-
-                          )}
-
-                        </CardActionArea>
-
-                      </Card>
-
-                    ))
-
-                  )}
-
-                </Box>
-
-              )}
-
-      
-
-              {/* Step 2: Activity Selection */}
-
-              {step === 'activity' && (
-
-                <Box>
-
-                  <Box
-
-                    sx={{
-
-                      display: 'grid',
-
-                      gridTemplateColumns: { xs: 'repeat(2, 1fr)', sm: 'repeat(2, 1fr)' },
-
-                      gap: 2,
-
-                    }}
-
-                  >
-
-                    {activitiesLoading ? (
-
-                      <Box
-
-                        sx={{ gridColumn: '1 / -1', display: 'flex', justifyContent: 'center', py: 4 }}
-
-                      >
-
-                        <CircularProgress />
-
-                      </Box>
-
-                    ) : (
-
-                      activities?.map((activity) => (
-
-                        <Card
-
-                          key={activity.id}
-
-                          elevation={activityId === activity.id ? 4 : 1}
-
-                          sx={{
-
-                            border: activityId === activity.id ? 2 : 0,
-
-                            borderColor: 'primary.main',
-
-                          }}
-
-                        >
-
-                          <CardActionArea
-
-                            onClick={() => handleActivitySelect(activity.id)}
-
-                            sx={{
-
-                              p: 3,
-
-                              display: 'flex',
-
-                              alignItems: 'center',
-
-                              justifyContent: 'center',
-
-                              minHeight: 80,
-
-                              position: 'relative',
-
-                            }}
-
-                          >
-
-                            <Typography variant="body1" fontWeight="medium" textAlign="center">
-
-                              {activity.name}
-
-                            </Typography>
-
-                            {activityId === activity.id && (
-
-                              <Check color="primary" sx={{ position: 'absolute', top: 8, right: 8 }} />
-
-                            )}
-
-                          </CardActionArea>
-
-                        </Card>
-
-                      ))
-
+                    {cycleId === cycle.id && (
+                      <Check color="primary" sx={{ position: 'absolute', top: 8, right: 8 }} />
                     )}
+                  </CardActionArea>
+                </Card>
+              ))
+            )}
+          </Box>
+        )}
 
-                  </Box>
+        {/* Step 2: Activity Selection */}
 
-      
+        {step === 'activity' && (
+          <Box>
+            <Box
+              sx={{
+                display: 'grid',
 
-                  <Button onClick={() => setStep('cycle')} sx={{ mt: 2 }} fullWidth>
+                gridTemplateColumns: { xs: 'repeat(2, 1fr)', sm: 'repeat(2, 1fr)' },
 
-                    Retour
-
-                  </Button>
-
+                gap: 2,
+              }}
+            >
+              {activitiesLoading ? (
+                <Box
+                  sx={{ gridColumn: '1 / -1', display: 'flex', justifyContent: 'center', py: 4 }}
+                >
+                  <CircularProgress />
                 </Box>
-
-              )}
-
-      
-
-              {/* Step 3: Date Selection */}
-
-              {step === 'date' && (
-
-                <Box>
-
-                  <Box sx={{ display: 'flex', justifyContent: 'center', py: 2 }}>
-
-                    <DatePicker
-
-                      label="Date"
-
-                      value={date}
-
-                      onChange={(newDate) => setDate(newDate)}
-
-                      slotProps={{
-
-                        textField: {
-
-                          fullWidth: true,
-
-                        },
-
-                      }}
-
-                    />
-
-                  </Box>
-
-      
-
-                  <Box sx={{ display: 'flex', gap: 2, mt: 3 }}>
-
-                    <Button onClick={() => setStep('activity')} fullWidth>
-
-                      Retour
-
-                    </Button>
-
-                    <Button onClick={handleDateSelect} variant="contained" fullWidth disabled={!date}>
-
-                      Suivant
-
-                    </Button>
-
-                  </Box>
-
-                </Box>
-
-              )}
-
-      
-
-              {/* Step 4: Duration Selection */}
-
-              {step === 'duration' && (
-
-                <Box>
-
-                  <Box
-
+              ) : (
+                activities?.map((activity) => (
+                  <Card
+                    key={activity.id}
+                    elevation={activityId === activity.id ? 4 : 1}
                     sx={{
+                      border: activityId === activity.id ? 2 : 0,
 
-                      display: 'grid',
-
-                      gridTemplateColumns: { xs: 'repeat(2, 1fr)', sm: 'repeat(4, 1fr)' },
-
-                      gap: 2,
-
+                      borderColor: 'primary.main',
                     }}
-
                   >
-
-                    {DURATION_OPTIONS.map((option) => (
-
-                      <Card
-
-                        key={option.value}
-
-                        elevation={minutes === option.value ? 4 : 1}
-
-                        sx={{
-
-                          border: minutes === option.value ? 2 : 0,
-
-                          borderColor: 'primary.main',
-
-                        }}
-
-                      >
-
-                        <CardActionArea
-
-                          onClick={() => handleDurationSelect(option.value)}
-
-                          sx={{
-
-                            p: 3,
-
-                            display: 'flex',
-
-                            alignItems: 'center',
-
-                            justifyContent: 'center',
-
-                            minHeight: 80,
-
-                            position: 'relative',
-
-                          }}
-
-                        >
-
-                          <Typography variant="h6" fontWeight="bold">
-
-                            {option.label}
-
-                          </Typography>
-
-                          {minutes === option.value && (
-
-                            <Check color="primary" sx={{ position: 'absolute', top: 8, right: 8 }} />
-
-                          )}
-
-                        </CardActionArea>
-
-                      </Card>
-
-                    ))}
-
-                  </Box>
-
-      
-
-                  <Button onClick={() => setStep('date')} sx={{ mt: 2 }} fullWidth>
-
-                    Retour
-
-                  </Button>
-
-                </Box>
-
-              )}
-
-      
-
-              {/* Step 5: Quantity Selection */}
-
-              {step === 'quantity' && (
-
-                <Box>
-
-                  <Box
-
-                    sx={{
-
-                      gap: 2,
-
-                      mb: 3,
-
-                    }}
-
-                  >
-
-                    <TextField
-
-                      label="Quantité (Kg, unités, etc..)"
-
-                      type="number"
-
-                      value={quantity}
-
-                      onChange={(e) => setQuantity(e.target.value ? Number(e.target.value) : '')}
-
-                      slotProps={{
-
-                        htmlInput: { min: 0, step: 0.1 },
-
-                      }}
-
-                      fullWidth
-
+                    <CardActionArea
+                      onClick={() => handleActivitySelect(activity.id)}
                       sx={{
+                        p: 3,
 
-                        '& .MuiInputBase-root': {
+                        display: 'flex',
 
-                          height: 80,
+                        alignItems: 'center',
 
-                          fontSize: '1.5rem',
+                        justifyContent: 'center',
 
-                        },
+                        minHeight: 80,
 
+                        position: 'relative',
                       }}
-
-                    />
-
-                  </Box>
-
-      
-
-                  <Box sx={{ display: 'flex', gap: 2 }}>
-
-                    <Button onClick={() => setStep('duration')} fullWidth>
-
-                      Retour
-
-                    </Button>
-
-                    <Button
-
-                      onClick={handleSubmit}
-
-                      variant="contained"
-
-                      fullWidth
-
-                      disabled={isLoading}
-
                     >
+                      <Typography variant="body1" fontWeight="medium" textAlign="center">
+                        {activity.name}
+                      </Typography>
 
-                      {isLoading ? 'Enregistrement...' : 'Valider'}
-
-                    </Button>
-
-                  </Box>
-
-                </Box>
-
+                      {activityId === activity.id && (
+                        <Check color="primary" sx={{ position: 'absolute', top: 8, right: 8 }} />
+                      )}
+                    </CardActionArea>
+                  </Card>
+                ))
               )}
+            </Box>
 
-            </DialogContent>
+            <Button onClick={() => setStep('cycle')} sx={{ mt: 2 }} fullWidth>
+              Retour
+            </Button>
+          </Box>
+        )}
 
-      
+        {/* Step 3: Date Selection */}
+
+        {step === 'date' && (
+          <Box>
+            <Box sx={{ display: 'flex', justifyContent: 'center', py: 2 }}>
+              <DatePicker
+                label="Date"
+                value={date}
+                onChange={(newDate) => setDate(newDate)}
+                slotProps={{
+                  textField: {
+                    fullWidth: true,
+                  },
+                }}
+              />
+            </Box>
+
+            <Box sx={{ display: 'flex', gap: 2, mt: 3 }}>
+              <Button onClick={() => setStep('activity')} fullWidth>
+                Retour
+              </Button>
+
+              <Button onClick={handleDateSelect} variant="contained" fullWidth disabled={!date}>
+                Suivant
+              </Button>
+            </Box>
+          </Box>
+        )}
+
+        {/* Step 4: Duration Selection */}
+
+        {step === 'duration' && (
+          <Box>
+            <Box
+              sx={{
+                display: 'grid',
+
+                gridTemplateColumns: { xs: 'repeat(2, 1fr)', sm: 'repeat(4, 1fr)' },
+
+                gap: 2,
+              }}
+            >
+              {DURATION_OPTIONS.map((option) => (
+                <Card
+                  key={option.value}
+                  elevation={minutes === option.value ? 4 : 1}
+                  sx={{
+                    border: minutes === option.value ? 2 : 0,
+
+                    borderColor: 'primary.main',
+                  }}
+                >
+                  <CardActionArea
+                    onClick={() => handleDurationSelect(option.value)}
+                    sx={{
+                      p: 3,
+
+                      display: 'flex',
+
+                      alignItems: 'center',
+
+                      justifyContent: 'center',
+
+                      minHeight: 80,
+
+                      position: 'relative',
+                    }}
+                  >
+                    <Typography variant="h6" fontWeight="bold">
+                      {option.label}
+                    </Typography>
+
+                    {minutes === option.value && (
+                      <Check color="primary" sx={{ position: 'absolute', top: 8, right: 8 }} />
+                    )}
+                  </CardActionArea>
+                </Card>
+              ))}
+            </Box>
+
+            <Button onClick={() => setStep('date')} sx={{ mt: 2 }} fullWidth>
+              Retour
+            </Button>
+          </Box>
+        )}
+
+        {/* Step 5: Quantity Selection */}
+
+        {step === 'quantity' && (
+          <Box>
+            <Box
+              sx={{
+                gap: 2,
+
+                mb: 3,
+              }}
+            >
+              <TextField
+                label="Quantité (Kg, unités, etc..)"
+                type="number"
+                value={quantity}
+                onChange={(e) => setQuantity(e.target.value ? Number(e.target.value) : '')}
+                slotProps={{
+                  htmlInput: { min: 0, step: 0.1 },
+                }}
+                fullWidth
+                sx={{
+                  '& .MuiInputBase-root': {
+                    height: 80,
+
+                    fontSize: '1.5rem',
+                  },
+                }}
+              />
+            </Box>
+
+            <Box sx={{ display: 'flex', gap: 2 }}>
+              <Button onClick={() => setStep('duration')} fullWidth>
+                Retour
+              </Button>
+
+              <Button onClick={handleSubmit} variant="contained" fullWidth disabled={isLoading}>
+                {isLoading ? 'Enregistrement...' : 'Valider'}
+              </Button>
+            </Box>
+          </Box>
+        )}
+      </DialogContent>
     </Dialog>
   );
 }
