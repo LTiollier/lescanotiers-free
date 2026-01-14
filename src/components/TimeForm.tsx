@@ -128,11 +128,6 @@ export function TimeForm({ open, onClose, onSubmit, time, isLoading }: TimeFormP
     }
   };
 
-  const handleSkipQuantity = () => {
-    setQuantity('');
-    handleSubmit();
-  };
-
   const getStepTitle = () => {
     switch (step) {
       case 'cycle':
@@ -425,15 +420,7 @@ export function TimeForm({ open, onClose, onSubmit, time, isLoading }: TimeFormP
               <Button onClick={() => setStep('duration')} fullWidth>
                 Retour
               </Button>
-              <Button onClick={handleSkipQuantity} variant="outlined" fullWidth>
-                Passer
-              </Button>
-              <Button
-                onClick={handleSubmit}
-                variant="contained"
-                fullWidth
-                disabled={isLoading || !quantity}
-              >
+              <Button onClick={handleSubmit} variant="contained" fullWidth disabled={isLoading}>
                 {isLoading ? 'Enregistrement...' : 'Valider'}
               </Button>
             </Box>
