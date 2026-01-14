@@ -7,8 +7,7 @@ type Profile = Database['public']['Tables']['profiles']['Row'];
 interface CreateUserParams {
   email: string;
   password: string;
-  displayName: string;
-  username?: string;
+  username: string;
   role?: 'admin' | 'employee';
 }
 
@@ -44,13 +43,7 @@ export function useCreateUser() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({
-      email,
-      password,
-      username,
-      displayName,
-      role = 'employee',
-    }: CreateUserParams) => {
+    mutationFn: async ({ email, password, username, role = 'employee' }: CreateUserParams) => {
       // Create auth user using admin API
       const { data: authData, error: authError } = await supabase.auth.signUp({
         email,
@@ -58,7 +51,6 @@ export function useCreateUser() {
         options: {
           data: {
             username,
-            display_name: displayName,
           },
           emailRedirectTo: undefined, // No email confirmation needed
         },
@@ -67,14 +59,13 @@ export function useCreateUser() {
       if (authError) throw authError;
       if (!authData.user) throw new Error('Failed to create user');
 
-      // Update profile with role, username and display_name
+      // Update profile with role and username
       const { error: profileError } = await supabase
         .from('profiles')
         // @ts-expect-error - Supabase type inference issue with Update type
         .update({
-          username: username || email,
-          display_name: displayName,
-          role: role,
+          username,
+          role,
         })
         .eq('id', authData.user.id);
 

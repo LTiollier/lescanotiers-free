@@ -3,7 +3,7 @@
 -- Profiles table (extends auth.users)
 CREATE TABLE IF NOT EXISTS public.profiles (
   id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
-  username TEXT UNIQUE,
+  username TEXT UNIQUE NOT NULL,
   role TEXT NOT NULL DEFAULT 'employee',
   created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL
 );

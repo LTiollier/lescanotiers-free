@@ -65,14 +65,14 @@ export function UserManagement() {
   // Form state
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [displayName, setDisplayName] = useState('');
+  const [username, setUsername] = useState('');
   const [role, setRole] = useState<'admin' | 'employee'>('employee');
   const [newRole, setNewRole] = useState<'admin' | 'employee'>('employee');
 
   const handleAdd = () => {
     setEmail('');
     setPassword('');
-    setDisplayName('');
+    setUsername('');
     setRole('employee');
     setFormOpen(true);
   };
@@ -86,10 +86,10 @@ export function UserManagement() {
   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!displayName.trim()) {
+    if (!username.trim()) {
       setSnackbar({
         open: true,
-        message: "Le nom d'affichage est obligatoire",
+        message: "Le nom d'utilisateur est obligatoire",
         severity: 'error',
       });
       return;
@@ -108,8 +108,7 @@ export function UserManagement() {
       await createUser.mutateAsync({
         email,
         password,
-        username: undefined,
-        displayName,
+        username,
         role,
       });
       setSnackbar({
@@ -216,9 +215,7 @@ export function UserManagement() {
                         {user.id === currentUser?.id && (
                           <Chip label="Vous" size="small" color="primary" />
                         )}
-                        <Typography variant="body2">
-                          {user.display_name || user.username || 'Utilisateur'}
-                        </Typography>
+                        <Typography variant="body2">{user.username || 'Utilisateur'}</Typography>
                       </Stack>
                     ),
                     emphasized: true,
@@ -293,7 +290,7 @@ export function UserManagement() {
                           {user.id === currentUser?.id && (
                             <Chip label="Vous" size="small" color="primary" />
                           )}
-                          <Typography variant="body2">{user.display_name || '—'}</Typography>
+                          <Typography variant="body2">{user.username || '—'}</Typography>
                         </Stack>
                       </TableCell>
                       <TableCell>
@@ -396,9 +393,9 @@ export function UserManagement() {
                 helperText="Au moins 6 caractères"
               />
               <TextField
-                label="Nom d'affichage"
-                value={displayName}
-                onChange={(e) => setDisplayName(e.target.value)}
+                label="Nom d'utilisateur"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
                 required
                 fullWidth
               />
