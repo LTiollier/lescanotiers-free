@@ -63,9 +63,17 @@ export function CyclesComparisonChart() {
     setSelectedCycleIds(typeof value === 'string' ? value.split(',').map(Number) : value);
   };
 
-  // 3. Prepare series: one series per activity
+  // 3. Prepare data by cycle
   const dataByCycle = _.groupBy(times, 'cycle_id');
-  const series = activities.map((activity) => {
+
+  // 4. Calculate totals for bar labels, axes and tooltips
+  const totalsPerCycle = chartCycles.map((cycle) => {
+    const cycleTimes = dataByCycle[cycle.id] || [];
+    return _.sumBy(cycleTimes, 'minutes') / 60;
+  });
+
+  // 5. Prepare base series
+  const baseSeries = activities.map((activity) => {
     const activityData = chartCycles.map((cycle) => {
       const cycleTimes = dataByCycle[cycle.id] || [];
       const activityTimes = cycleTimes.filter((t) => t.activity_id === activity.id);
@@ -77,20 +85,26 @@ export function CyclesComparisonChart() {
       data: activityData,
       label: activity.name,
       stack: 'total',
-      valueFormatter: (value: number | null) => (value ? `${value.toFixed(1)}h` : '0h'),
+      valueFormatter: (value: number | null, context: { dataIndex: number }) => {
+        if (!value) return '0h';
+        const total = totalsPerCycle[context.dataIndex] || 0;
+        const percentage = total > 0 ? ((value / total) * 100).toFixed(0) : 0;
+        return `${value.toFixed(1)}h (${percentage}% du cycle)`;
+      },
     };
   });
 
-  // 4. Calculate totals for bar labels
-  const totalsPerCycle = chartCycles.map((cycle) => {
-    const cycleTimes = dataByCycle[cycle.id] || [];
-    return _.sumBy(cycleTimes, 'minutes') / 60;
-  });
+  // 6. Add barLabel to series (MUI v8 way)
+  const series = baseSeries.map((s) => ({
+    ...s,
+  }));
 
-  const xAxisData = chartCycles.map((c) => {
+  const xAxisData = chartCycles.map((c, index) => {
     const vegName = c.vegetables?.name || 'Inconnu';
     const parcelName = c.parcels?.name || 'Inconnu';
-    return isMobile ? vegName : `${vegName} (${parcelName})`;
+    const total = totalsPerCycle[index];
+    const totalStr = total !== undefined ? `${total.toFixed(1)}h` : '0h';
+    return isMobile ? `${vegName}\n${totalStr}` : `${vegName} (${parcelName})\n${totalStr}`;
   });
 
   return (
@@ -148,26 +162,9 @@ export function CyclesComparisonChart() {
             {
               scaleType: 'band',
               data: xAxisData,
-              label: isMobile ? '' : 'Cycles',
             },
           ]}
-          series={series.map((s) => ({
-            ...s,
-            label: s.label,
-          }))}
-          barLabel={(item) => {
-            // Only show the label for the top-most item in the stack
-            const seriesIndex = series.findIndex((s) => s.label === item.seriesId);
-            const isLastWithData = series
-              .slice(seriesIndex + 1)
-              .every((s) => s.data[item.dataIndex] === 0);
-
-            const total = totalsPerCycle[item.dataIndex];
-            if (isLastWithData && total !== undefined && total > 0) {
-              return `${total.toFixed(1)}h`;
-            }
-            return null;
-          }}
+          series={series}
           height={isMobile ? 400 : 350}
           margin={{
             top: 20,
