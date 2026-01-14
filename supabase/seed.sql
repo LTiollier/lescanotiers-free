@@ -1,3 +1,7 @@
+-- Admin      : b29875c2-cd3c-4ea5-9921-ca398ec966f5
+-- Employee 1 : 04cf927d-d5e0-4147-8d84-3b968c07eff6
+-- Employee 2 : 471758fa-07ba-47a5-a972-240b7078b7c9
+
 -- Seed data for Les Canotiers
 
 -- Clear existing data
@@ -78,51 +82,92 @@ INSERT INTO public.activities (id, name) VALUES
 (7, 'Récolte'),
 (8, 'Taille');
 
--- Seed Profiles (Placeholders - Replace UUIDs with actual auth.users IDs)
--- USER_ID_1: Jean (Admin)
--- USER_ID_2: Marie (Employee)
--- USER_ID_3: Pierre (Employee)
+-- Seed Profiles (Actual auth.users IDs)
+
 INSERT INTO public.profiles (id, username, role) VALUES
-('00000000-0000-0000-0000-000000000001', 'jean_admin', 'admin'),
-('00000000-0000-0000-0000-000000000002', 'marie_maraichere', 'employee'),
-('00000000-0000-0000-0000-000000000003', 'pierre_aide', 'employee');
+
+('60e58c89-a29d-4357-94d3-e74034870500', 'jean_admin', 'admin'),
+
+('20e79129-87c2-498c-901d-557348e3e46c', 'marie_maraichere', 'employee'),
+
+('29b7c12a-6091-49b7-b01d-557348e3e46d', 'pierre_aide', 'employee');
+
+
 
 -- Seed Cycles
+
 -- Past Cycles
+
 INSERT INTO public.cycles (id, vegetable_id, parcel_id, starts_at, ends_at) VALUES
+
 (1, 11, 1, '2025-04-15', '2025-09-30'), -- Tomate en P1
+
 (2, 1, 3, '2025-05-10', '2025-08-15');  -- Carotte en P3
 
+
+
 -- Current/Future Cycles (Today is 2026-01-14)
+
 INSERT INTO public.cycles (id, vegetable_id, parcel_id, starts_at, ends_at) VALUES
+
 (3, 12, 2, '2025-12-10', '2026-05-20'), -- Courgette en P2 (En cours)
+
 (4, 6, 9, '2026-01-05', '2026-03-15');   -- Laitue en Planche 1 (En cours)
 
+
+
 -- Seed Times
+
 -- For Cycle 1 (Tomates - Passé)
+
 INSERT INTO public.times (user_id, cycle_id, activity_id, date, minutes) VALUES
-('00000000-0000-0000-0000-000000000001', 1, 1, '2025-04-15', 120), -- Préparation
-('00000000-0000-0000-0000-000000000002', 1, 3, '2025-04-20', 180), -- Plantation
-('00000000-0000-0000-0000-000000000003', 1, 4, '2025-05-15', 240), -- Désherbage
-('00000000-0000-0000-0000-000000000002', 1, 8, '2025-06-10', 120), -- Taille
-('00000000-0000-0000-0000-000000000001', 1, 7, '2025-08-20', 300), -- Récolte
-('00000000-0000-0000-0000-000000000003', 1, 7, '2025-08-21', 300); -- Récolte
+
+('60e58c89-a29d-4357-94d3-e74034870500', 1, 1, '2025-04-15', 120), -- Préparation
+
+('20e79129-87c2-498c-901d-557348e3e46c', 1, 3, '2025-04-20', 180), -- Plantation
+
+('29b7c12a-6091-49b7-b01d-557348e3e46d', 1, 4, '2025-05-15', 240), -- Désherbage
+
+('20e79129-87c2-498c-901d-557348e3e46c', 1, 8, '2025-06-10', 120), -- Taille
+
+('60e58c89-a29d-4357-94d3-e74034870500', 1, 7, '2025-08-20', 300), -- Récolte
+
+('29b7c12a-6091-49b7-b01d-557348e3e46d', 1, 7, '2025-08-21', 300); -- Récolte
+
+
 
 -- For Cycle 2 (Carottes - Passé)
+
 INSERT INTO public.times (user_id, cycle_id, activity_id, date, minutes) VALUES
-('00000000-0000-0000-0000-000000000002', 2, 2, '2025-05-10', 90),  -- Semis
-('00000000-0000-0000-0000-000000000003', 2, 4, '2025-06-05', 360), -- Désherbage
-('00000000-0000-0000-0000-000000000001', 2, 7, '2025-08-10', 180); -- Récolte
+
+('20e79129-87c2-498c-901d-557348e3e46c', 2, 2, '2025-05-10', 90),  -- Semis
+
+('29b7c12a-6091-49b7-b01d-557348e3e46d', 2, 4, '2025-06-05', 360), -- Désherbage
+
+('60e58c89-a29d-4357-94d3-e74034870500', 2, 7, '2025-08-10', 180); -- Récolte
+
+
 
 -- For Cycle 3 (Courgettes - En cours)
+
 INSERT INTO public.times (user_id, cycle_id, activity_id, date, minutes) VALUES
-('00000000-0000-0000-0000-000000000001', 3, 1, '2025-12-10', 150), -- Préparation
-('00000000-0000-0000-0000-000000000002', 3, 3, '2025-12-15', 200), -- Plantation
-('00000000-0000-0000-0000-000000000003', 3, 5, '2026-01-05', 60),  -- Arrosage
-('00000000-0000-0000-0000-000000000002', 3, 4, '2026-01-10', 180); -- Désherbage
+
+('60e58c89-a29d-4357-94d3-e74034870500', 3, 1, '2025-12-10', 150), -- Préparation
+
+('20e79129-87c2-498c-901d-557348e3e46c', 3, 3, '2025-12-15', 200), -- Plantation
+
+('29b7c12a-6091-49b7-b01d-557348e3e46d', 3, 5, '2026-01-05', 60),  -- Arrosage
+
+('20e79129-87c2-498c-901d-557348e3e46c', 3, 4, '2026-01-10', 180); -- Désherbage
+
+
 
 -- For Cycle 4 (Laitue - En cours)
+
 INSERT INTO public.times (user_id, cycle_id, activity_id, date, minutes) VALUES
-('00000000-0000-0000-0000-000000000003', 4, 1, '2026-01-05', 60),  -- Préparation
-('00000000-0000-0000-0000-000000000002', 4, 3, '2026-01-06', 120), -- Plantation
-('00000000-0000-0000-0000-000000000001', 4, 4, '2026-01-12', 45);  -- Désherbage
+
+('29b7c12a-6091-49b7-b01d-557348e3e46d', 4, 1, '2026-01-05', 60),  -- Préparation
+
+('20e79129-87c2-498c-901d-557348e3e46c', 4, 3, '2026-01-06', 120), -- Plantation
+
+('60e58c89-a29d-4357-94d3-e74034870500', 4, 4, '2026-01-12', 45);  -- Désherbage
