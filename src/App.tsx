@@ -10,6 +10,7 @@ import { useAuth } from './contexts/AuthContext';
 const Activities = lazy(() =>
   import('./pages/Activities').then((m) => ({ default: m.Activities })),
 );
+const Analytics = lazy(() => import('./pages/Analytics').then((m) => ({ default: m.Analytics })));
 const Cycles = lazy(() => import('./pages/Cycles').then((m) => ({ default: m.Cycles })));
 const Dashboard = lazy(() => import('./pages/Dashboard').then((m) => ({ default: m.Dashboard })));
 const Forbidden = lazy(() => import('./pages/Forbidden').then((m) => ({ default: m.Forbidden })));
@@ -52,6 +53,14 @@ function App() {
               element={
                 <RoleBasedRoute requiredRole="admin">
                   <Activities />
+                </RoleBasedRoute>
+              }
+            />
+            <Route
+              path="/analytics"
+              element={
+                <RoleBasedRoute requiredRole="admin">
+                  <Analytics />
                 </RoleBasedRoute>
               }
             />

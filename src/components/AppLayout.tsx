@@ -1,5 +1,6 @@
 import {
   AccountCircle,
+  Assessment,
   Assignment,
   Autorenew,
   Dashboard as DashboardIcon,
@@ -49,6 +50,7 @@ interface NavMenuItem {
 
 const menuItems: NavMenuItem[] = [
   { text: 'Tableau de bord', icon: <DashboardIcon />, path: '/', adminOnly: true },
+  { text: 'Analyses', icon: <Assessment />, path: '/analytics', adminOnly: true },
   { text: 'Parcelles', icon: <Terrain />, path: '/parcels', adminOnly: true },
   { text: 'Légumes', icon: <LocalFlorist />, path: '/vegetables', adminOnly: true },
   { text: 'Cycles', icon: <Autorenew />, path: '/cycles', adminOnly: true },
