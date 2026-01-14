@@ -160,7 +160,7 @@ export function AppLayout() {
 
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <Typography variant="body2">
-              {isLoading ? '...' : profile?.display_name || profile?.username || user?.email}
+              {isLoading ? '...' : profile?.username || user?.email}
             </Typography>
             <IconButton color="inherit" onClick={handleMenuOpen}>
               <AccountCircle />
@@ -185,7 +185,7 @@ export function AppLayout() {
                 <AccountCircle fontSize="small" />
               </ListItemIcon>
               <ListItemText
-                primary={profile?.display_name || profile?.username || user?.email}
+                primary={isLoading ? '...' : profile?.username || user?.email}
                 secondary={profile?.role === 'admin' ? 'Administrateur' : 'Employé'}
               />
             </MenuItem>

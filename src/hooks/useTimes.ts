@@ -7,7 +7,7 @@ type TimeInsert = Database['public']['Tables']['times']['Insert'];
 type TimeUpdate = Database['public']['Tables']['times']['Update'];
 
 export interface TimeWithRelations extends Time {
-  profiles?: { id: string; username: string | null; display_name: string | null };
+  profiles?: { id: string; username: string | null };
   cycles?: {
     id: number;
     vegetables?: { id: number; name: string };
@@ -28,7 +28,7 @@ export function useTimes() {
         .select(
           `
           *,
-          profiles(id, username, display_name),
+          profiles(id, username),
           cycles(id, vegetables(id, name), parcels(id, name)),
           activities(id, name)
         `,

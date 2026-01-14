@@ -212,11 +212,7 @@ export function Times() {
                   {
                     label: 'Utilisateur',
                     value: (
-                      <Chip
-                        label={time.profiles?.display_name || time.profiles?.username || 'N/A'}
-                        size="small"
-                        color="default"
-                      />
+                      <Chip label={time.profiles?.username || 'N/A'} size="small" color="default" />
                     ),
                   },
                   {
@@ -310,7 +306,7 @@ export function Times() {
                       <TableCell>{new Date(time.date).toLocaleDateString('fr-FR')}</TableCell>
                       <TableCell>
                         <Chip
-                          label={time.profiles?.display_name || time.profiles?.username || 'N/A'}
+                          label={time.profiles?.username || 'N/A'}
                           size="small"
                           color="default"
                         />

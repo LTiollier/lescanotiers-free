@@ -62,7 +62,6 @@ export function useCreateUser() {
       // Update profile with role and username
       const { error: profileError } = await supabase
         .from('profiles')
-        // @ts-expect-error - Supabase type inference issue with Update type
         .update({
           username,
           role,
@@ -87,11 +86,7 @@ export function useUpdateUserRole() {
 
   return useMutation({
     mutationFn: async ({ userId, role }: UpdateUserRoleParams) => {
-      const { error } = await supabase
-        .from('profiles')
-        // @ts-expect-error - Supabase type inference issue with Update type
-        .update({ role })
-        .eq('id', userId);
+      const { error } = await supabase.from('profiles').update({ role }).eq('id', userId);
 
       if (error) throw error;
     },

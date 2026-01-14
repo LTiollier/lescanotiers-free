@@ -1,183 +1,350 @@
-/**
- * Database Types
- *
- * This file contains TypeScript types for the Supabase database schema.
- * These types are automatically generated using the Supabase CLI.
- *
- * To regenerate types after schema changes:
- * ```bash
- * npx supabase gen types typescript --project-id <your-project-id> --schema public > src/types/database.types.ts
- * ```
- *
- * Or if using local development:
- * ```bash
- * npx supabase gen types typescript --local > src/types/database.types.ts
- * ```
- */
-
 export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[];
 
-export interface Database {
+export type Database = {
+  // Allows to automatically instantiate createClient with right options
+  // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
+  __InternalSupabase: {
+    PostgrestVersion: '14.1';
+  };
   public: {
     Tables: {
-      profiles: {
+      activities: {
         Row: {
-          id: string;
-          username: string | null;
-          role: string;
-          display_name: string | null;
           created_at: string;
-        };
-        Insert: {
-          id: string;
-          username?: string | null;
-          role?: string;
-          display_name?: string | null;
-          created_at?: string;
-        };
-        Update: {
-          id?: string;
-          username?: string | null;
-          role?: string;
-          display_name?: string | null;
-          created_at?: string;
-        };
-      };
-      parcels: {
-        Row: {
           id: number;
           name: string;
-          created_at: string;
         };
         Insert: {
+          created_at?: string;
           id?: number;
           name: string;
-          created_at?: string;
         };
         Update: {
+          created_at?: string;
           id?: number;
           name?: string;
-          created_at?: string;
         };
-      };
-      vegetable_categories: {
-        Row: {
-          id: number;
-          name: string;
-          created_at: string;
-        };
-        Insert: {
-          id?: number;
-          name: string;
-          created_at?: string;
-        };
-        Update: {
-          id?: number;
-          name?: string;
-          created_at?: string;
-        };
-      };
-      vegetables: {
-        Row: {
-          id: number;
-          name: string;
-          category_id: number | null;
-          image_url: string | null;
-          created_at: string;
-        };
-        Insert: {
-          id?: number;
-          name: string;
-          category_id?: number | null;
-          image_url?: string | null;
-          created_at?: string;
-        };
-        Update: {
-          id?: number;
-          name?: string;
-          category_id?: number | null;
-          image_url?: string | null;
-          created_at?: string;
-        };
+        Relationships: [];
       };
       cycles: {
         Row: {
+          created_at: string;
+          ends_at: string;
           id: number;
-          vegetable_id: number;
           parcel_id: number;
           starts_at: string;
-          ends_at: string;
-          created_at: string;
+          vegetable_id: number;
         };
         Insert: {
+          created_at?: string;
+          ends_at: string;
           id?: number;
-          vegetable_id: number;
           parcel_id: number;
           starts_at: string;
-          ends_at: string;
-          created_at?: string;
+          vegetable_id: number;
         };
         Update: {
+          created_at?: string;
+          ends_at?: string;
           id?: number;
-          vegetable_id?: number;
           parcel_id?: number;
           starts_at?: string;
-          ends_at?: string;
-          created_at?: string;
+          vegetable_id?: number;
         };
+        Relationships: [
+          {
+            foreignKeyName: 'cycles_parcel_id_fkey';
+            columns: ['parcel_id'];
+            isOneToOne: false;
+            referencedRelation: 'parcels';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'cycles_vegetable_id_fkey';
+            columns: ['vegetable_id'];
+            isOneToOne: false;
+            referencedRelation: 'vegetables';
+            referencedColumns: ['id'];
+          },
+        ];
       };
-      activities: {
+      parcels: {
         Row: {
+          created_at: string;
           id: number;
           name: string;
-          created_at: string;
         };
         Insert: {
+          created_at?: string;
           id?: number;
           name: string;
-          created_at?: string;
         };
         Update: {
+          created_at?: string;
           id?: number;
           name?: string;
-          created_at?: string;
         };
+        Relationships: [];
+      };
+      profiles: {
+        Row: {
+          created_at: string;
+          id: string;
+          role: string;
+          username: string;
+        };
+        Insert: {
+          created_at?: string;
+          id: string;
+          role?: string;
+          username: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          role?: string;
+          username?: string;
+        };
+        Relationships: [];
       };
       times: {
         Row: {
-          id: number;
-          user_id: string;
-          cycle_id: number;
           activity_id: number;
+          created_at: string;
+          cycle_id: number;
           date: string;
+          id: number;
           minutes: number;
           quantity: number | null;
-          created_at: string;
+          user_id: string;
         };
         Insert: {
-          id?: number;
-          user_id: string;
-          cycle_id: number;
           activity_id: number;
+          created_at?: string;
+          cycle_id: number;
           date: string;
+          id?: number;
           minutes: number;
           quantity?: number | null;
-          created_at?: string;
+          user_id: string;
         };
         Update: {
-          id?: number;
-          user_id?: string;
-          cycle_id?: number;
           activity_id?: number;
+          created_at?: string;
+          cycle_id?: number;
           date?: string;
+          id?: number;
           minutes?: number;
           quantity?: number | null;
-          created_at?: string;
+          user_id?: string;
         };
+        Relationships: [
+          {
+            foreignKeyName: 'times_activity_id_fkey';
+            columns: ['activity_id'];
+            isOneToOne: false;
+            referencedRelation: 'activities';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'times_cycle_id_fkey';
+            columns: ['cycle_id'];
+            isOneToOne: false;
+            referencedRelation: 'cycles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'times_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      vegetable_categories: {
+        Row: {
+          created_at: string;
+          id: number;
+          name: string;
+        };
+        Insert: {
+          created_at?: string;
+          id?: number;
+          name: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: number;
+          name?: string;
+        };
+        Relationships: [];
+      };
+      vegetables: {
+        Row: {
+          category_id: number | null;
+          created_at: string;
+          id: number;
+          image_url: string | null;
+          name: string;
+        };
+        Insert: {
+          category_id?: number | null;
+          created_at?: string;
+          id?: number;
+          image_url?: string | null;
+          name: string;
+        };
+        Update: {
+          category_id?: number | null;
+          created_at?: string;
+          id?: number;
+          image_url?: string | null;
+          name?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'vegetables_category_id_fkey';
+            columns: ['category_id'];
+            isOneToOne: false;
+            referencedRelation: 'vegetable_categories';
+            referencedColumns: ['id'];
+          },
+        ];
       };
     };
-    Views: Record<string, never>;
-    Functions: Record<string, never>;
-    Enums: Record<string, never>;
+    Views: {
+      [_ in never]: never;
+    };
+    Functions: {
+      is_admin: { Args: never; Returns: boolean };
+    };
+    Enums: {
+      [_ in never]: never;
+    };
+    CompositeTypes: {
+      [_ in never]: never;
+    };
   };
+};
+
+type DatabaseWithoutInternals = Omit<Database, '__InternalSupabase'>;
+
+type DefaultSchema = DatabaseWithoutInternals[Extract<keyof Database, 'public'>];
+
+export type Tables<
+  DefaultSchemaTableNameOrOptions extends
+    | keyof (DefaultSchema['Tables'] & DefaultSchema['Views'])
+    | { schema: keyof DatabaseWithoutInternals },
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals;
+  }
+    ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Tables'] &
+        DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Views'])
+    : never = never,
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals;
 }
+  ? (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Tables'] &
+      DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Views'])[TableName] extends {
+      Row: infer R;
+    }
+    ? R
+    : never
+  : DefaultSchemaTableNameOrOptions extends keyof (DefaultSchema['Tables'] & DefaultSchema['Views'])
+    ? (DefaultSchema['Tables'] & DefaultSchema['Views'])[DefaultSchemaTableNameOrOptions] extends {
+        Row: infer R;
+      }
+      ? R
+      : never
+    : never;
+
+export type TablesInsert<
+  DefaultSchemaTableNameOrOptions extends
+    | keyof DefaultSchema['Tables']
+    | { schema: keyof DatabaseWithoutInternals },
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals;
+  }
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Tables']
+    : never = never,
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals;
+}
+  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Tables'][TableName] extends {
+      Insert: infer I;
+    }
+    ? I
+    : never
+  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema['Tables']
+    ? DefaultSchema['Tables'][DefaultSchemaTableNameOrOptions] extends {
+        Insert: infer I;
+      }
+      ? I
+      : never
+    : never;
+
+export type TablesUpdate<
+  DefaultSchemaTableNameOrOptions extends
+    | keyof DefaultSchema['Tables']
+    | { schema: keyof DatabaseWithoutInternals },
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals;
+  }
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Tables']
+    : never = never,
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals;
+}
+  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Tables'][TableName] extends {
+      Update: infer U;
+    }
+    ? U
+    : never
+  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema['Tables']
+    ? DefaultSchema['Tables'][DefaultSchemaTableNameOrOptions] extends {
+        Update: infer U;
+      }
+      ? U
+      : never
+    : never;
+
+export type Enums<
+  DefaultSchemaEnumNameOrOptions extends
+    | keyof DefaultSchema['Enums']
+    | { schema: keyof DatabaseWithoutInternals },
+  EnumName extends DefaultSchemaEnumNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals;
+  }
+    ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions['schema']]['Enums']
+    : never = never,
+> = DefaultSchemaEnumNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals;
+}
+  ? DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions['schema']]['Enums'][EnumName]
+  : DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema['Enums']
+    ? DefaultSchema['Enums'][DefaultSchemaEnumNameOrOptions]
+    : never;
+
+export type CompositeTypes<
+  PublicCompositeTypeNameOrOptions extends
+    | keyof DefaultSchema['CompositeTypes']
+    | { schema: keyof DatabaseWithoutInternals },
+  CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals;
+  }
+    ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions['schema']]['CompositeTypes']
+    : never = never,
+> = PublicCompositeTypeNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals;
+}
+  ? DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions['schema']]['CompositeTypes'][CompositeTypeName]
+  : PublicCompositeTypeNameOrOptions extends keyof DefaultSchema['CompositeTypes']
+    ? DefaultSchema['CompositeTypes'][PublicCompositeTypeNameOrOptions]
+    : never;
+
+export const Constants = {
+  public: {
+    Enums: {},
+  },
+} as const;
