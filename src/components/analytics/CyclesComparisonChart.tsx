@@ -1,9 +1,9 @@
-import { BarChart } from '@mui/x-charts/BarChart';
 import { Box, CircularProgress, Typography, useMediaQuery, useTheme } from '@mui/material';
-import { useTimes } from '../../hooks/useTimes';
+import { BarChart } from '@mui/x-charts/BarChart';
+import _ from 'lodash';
 import { useActivities } from '../../hooks/useActivities';
 import { useCycles } from '../../hooks/useCycles';
-import _ from 'lodash';
+import { useTimes } from '../../hooks/useTimes';
 
 export function CyclesComparisonChart() {
   const theme = useTheme();
@@ -72,20 +72,20 @@ export function CyclesComparisonChart() {
           },
         ]}
         series={series}
-        height={isMobile ? 400 : 350}
+        height={isMobile ? 300 : 350}
         margin={{
           top: 20,
           right: 10,
           left: 40,
-          bottom: isMobile ? 100 : 60,
+          bottom: isMobile ? 140 : 60,
         }}
         slotProps={{
           legend: {
-            direction: 'row',
-            position: { vertical: 'bottom', horizontal: 'middle' },
+            direction: isMobile ? 'column' : 'row',
+            position: { vertical: 'bottom', horizontal: isMobile ? 'start' : 'middle' },
             padding: 0,
             labelStyle: {
-              fontSize: isMobile ? 10 : 12,
+              fontSize: isMobile ? 11 : 12,
             },
           } as never,
         }}
