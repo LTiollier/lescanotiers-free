@@ -106,15 +106,28 @@ export function CyclesComparisonChart() {
               return `${selected.length} cycle(s) sélectionné(s)`;
             }}
           >
-            {activeCycles.map((cycle) => (
-              <MenuItem key={cycle.id} value={cycle.id}>
-                <Checkbox checked={selectedCycleIds.indexOf(cycle.id) > -1} />
-                <ListItemText
-                  primary={`${cycle.vegetables?.name} (${cycle.parcels?.name})`}
-                  secondary={new Date(cycle.starts_at).toLocaleDateString()}
-                />
-              </MenuItem>
-            ))}
+            {activeCycles.map((cycle) => {
+              const isFinished = new Date(cycle.ends_at) < new Date();
+              return (
+                <MenuItem key={cycle.id} value={cycle.id}>
+                  <Checkbox checked={selectedCycleIds.indexOf(cycle.id) > -1} />
+                  <Box
+                    sx={{
+                      width: 12,
+                      height: 12,
+                      borderRadius: '50%',
+                      bgcolor: isFinished ? 'success.main' : 'warning.main',
+                      mr: 1.5,
+                      flexShrink: 0,
+                    }}
+                  />
+                  <ListItemText
+                    primary={`${cycle.vegetables?.name} (${cycle.parcels?.name})`}
+                    secondary={new Date(cycle.starts_at).toLocaleDateString()}
+                  />
+                </MenuItem>
+              );
+            })}
           </Select>
         </FormControl>
       </Box>
