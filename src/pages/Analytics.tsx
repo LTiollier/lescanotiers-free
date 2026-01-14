@@ -14,33 +14,19 @@ export function Analytics() {
         </Typography>
       </Box>
 
-            <Grid container spacing={4}>
+      <Grid container spacing={4}>
+        <Grid size={{ xs: 12 }}>
+          <Paper sx={{ p: 3, display: 'flex', flexDirection: 'column' }}>
+            <CyclesComparisonChart />
+          </Paper>
+        </Grid>
 
-              <Grid size={{ xs: 12 }}>
-
-                <Paper sx={{ p: 3, display: 'flex', flexDirection: 'column' }}>
-
-                  <CyclesComparisonChart />
-
-                </Paper>
-
-              </Grid>
-
-              
-
-              <Grid size={{ xs: 12 }}>
-
-                <Paper sx={{ p: 3, display: 'flex', flexDirection: 'column' }}>
-
-                  <TaskDistributionChart />
-
-                </Paper>
-
-              </Grid>
-
-            </Grid>
-
-      
+        <Grid size={{ xs: 12 }}>
+          <Paper sx={{ p: 3, display: 'flex', flexDirection: 'column' }}>
+            <TaskDistributionChart />
+          </Paper>
+        </Grid>
+      </Grid>
     </Container>
   );
 }

@@ -1,9 +1,9 @@
-import { BarChart } from '@mui/x-charts/BarChart';
 import { Box, CircularProgress, Typography } from '@mui/material';
-import { useTimes } from '../../hooks/useTimes';
+import { BarChart } from '@mui/x-charts/BarChart';
+import _ from 'lodash';
 import { useActivities } from '../../hooks/useActivities';
 import { useCycles } from '../../hooks/useCycles';
-import _ from 'lodash';
+import { useTimes } from '../../hooks/useTimes';
 
 export function CyclesComparisonChart() {
   const { data: times, isLoading: loadingTimes } = useTimes();
