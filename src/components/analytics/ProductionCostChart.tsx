@@ -1,5 +1,18 @@
-import { Box, CircularProgress, Typography } from '@mui/material';
+import {
+  Box,
+  Checkbox,
+  CircularProgress,
+  FormControl,
+  InputLabel,
+  ListItemText,
+  MenuItem,
+  OutlinedInput,
+  Select,
+  type SelectChangeEvent,
+  Typography,
+} from '@mui/material';
 import { BarChart } from '@mui/x-charts/BarChart';
+import { useMemo, useState } from 'react';
 import { useActivities } from '../../hooks/useActivities';
 import { useCycles } from '../../hooks/useCycles';
 import { useTimes } from '../../hooks/useTimes';
@@ -20,6 +33,18 @@ export function ProductionCostChart() {
     isLoading: isLoadingActivities,
     error: errorActivities,
   } = useActivities();
+  const [selectedCycleIds, setSelectedCycleIds] = useState<number[]>([]);
+
+  const activeCycles = useMemo(() => {
+    if (!cycles || !times) return [];
+    const cycleIdsWithData = new Set(times.map((t) => t.cycle_id));
+    return cycles.filter((c) => cycleIdsWithData.has(c.id));
+  }, [cycles, times]);
+
+  const handleSelectChange = (event: SelectChangeEvent<number[]>) => {
+    const value = event.target.value;
+    setSelectedCycleIds(typeof value === 'string' ? value.split(',').map(Number) : value);
+  };
 
   if (
     isLoadingCycles ||
@@ -71,41 +96,43 @@ export function ProductionCostChart() {
   }
 
   // --- Data processing for the chart ---
-  const processedData = cycles.map((cycle) => {
-    const cycleTimes = times.filter((time) => time.cycle_id === cycle.id);
-    const relatedVegetable = vegetables.find((veg) => veg.id === cycle.vegetable_id);
+  const processedData = activeCycles
+    .filter((cycle) => selectedCycleIds.includes(cycle.id))
+    .map((cycle) => {
+      const cycleTimes = times.filter((time) => time.cycle_id === cycle.id);
+      const relatedVegetable = vegetables.find((veg) => veg.id === cycle.vegetable_id);
 
-    let seedlingCost = 0;
-    if (cycle.seedling_cost_in_cents !== null && cycle.seedling_cost_in_cents !== undefined) {
-      const plantingActivityId = plantingActivity.id;
-      const plantingTimes = cycleTimes.filter((time) => time.activity_id === plantingActivityId);
-      const totalSeedlings = plantingTimes.reduce((sum, time) => sum + (time.quantity || 0), 0);
-      seedlingCost = cycle.seedling_cost_in_cents * totalSeedlings;
-    }
-
-    let laborCost = 0;
-    for (const timeEntry of cycleTimes) {
-      const userProfile = users.find((user) => user.id === timeEntry.user_id);
-      if (
-        userProfile &&
-        userProfile.hourly_rate_in_cents !== null &&
-        userProfile.hourly_rate_in_cents !== undefined
-      ) {
-        laborCost += (timeEntry.minutes / 60) * userProfile.hourly_rate_in_cents;
+      let seedlingCost = 0;
+      if (cycle.seedling_cost_in_cents !== null && cycle.seedling_cost_in_cents !== undefined) {
+        const plantingActivityId = plantingActivity.id;
+        const plantingTimes = cycleTimes.filter((time) => time.activity_id === plantingActivityId);
+        const totalSeedlings = plantingTimes.reduce((sum, time) => sum + (time.quantity || 0), 0);
+        seedlingCost = cycle.seedling_cost_in_cents * totalSeedlings;
       }
-    }
 
-    const totalCycleCostInCents = (cycle.utility_costs_in_cents || 0) + seedlingCost + laborCost;
-    const totalMinutes = cycleTimes.reduce((sum, time) => sum + time.minutes, 0);
-    const totalHours = totalMinutes / 60;
+      let laborCost = 0;
+      for (const timeEntry of cycleTimes) {
+        const userProfile = users.find((user) => user.id === timeEntry.user_id);
+        if (
+          userProfile &&
+          userProfile.hourly_rate_in_cents !== null &&
+          userProfile.hourly_rate_in_cents !== undefined
+        ) {
+          laborCost += (timeEntry.minutes / 60) * userProfile.hourly_rate_in_cents;
+        }
+      }
 
-    const costPerHour = totalHours > 0 ? totalCycleCostInCents / 100 / totalHours : 0;
+      const totalCycleCostInCents = (cycle.utility_costs_in_cents || 0) + seedlingCost + laborCost;
+      const totalMinutes = cycleTimes.reduce((sum, time) => sum + time.minutes, 0);
+      const totalHours = totalMinutes / 60;
 
-    return {
-      cycleName: `${relatedVegetable?.name || 'Inconnu'} - ${cycle.starts_at}`,
-      costPerHour: costPerHour,
-    };
-  });
+      const costPerHour = totalHours > 0 ? totalCycleCostInCents / 100 / totalHours : 0;
+
+      return {
+        cycleName: `${relatedVegetable?.name || 'Inconnu'} - ${cycle.starts_at}`,
+        costPerHour: costPerHour,
+      };
+    });
 
   const chartLabels = processedData.map((data) => data.cycleName);
   const costPerHourData = processedData.map((data) => data.costPerHour);
@@ -115,12 +142,53 @@ export function ProductionCostChart() {
       <Typography variant="h6" gutterBottom>
         Rapport Coût/Heure par Cycle
       </Typography>
-      <BarChart
-        height={300}
-        series={[{ data: costPerHourData, label: 'Coût par Heure (€/h)', color: '#8884d8' }]}
-        xAxis={[{ data: chartLabels, scaleType: 'band' }]}
-        margin={{ top: 10, bottom: 30, left: 40, right: 10 }}
-      />
+      <Box sx={{ display: 'flex', justifyContent: 'center', mb: 2 }}>
+        <FormControl sx={{ minWidth: 300, maxWidth: '100%' }}>
+          <InputLabel id="cycle-cost-multiselect-label">Filtrer par cycles</InputLabel>
+          <Select
+            labelId="cycle-cost-multiselect-label"
+            multiple
+            value={selectedCycleIds}
+            onChange={handleSelectChange}
+            input={<OutlinedInput label="Filtrer par cycles" />}
+            renderValue={(selected) => {
+              if (selected.length === 0) return <em>Sélectionner des cycles...</em>;
+              return `${selected.length} cycle(s) sélectionné(s)`;
+            }}
+          >
+            {activeCycles.map((cycle) => (
+              <MenuItem key={cycle.id} value={cycle.id}>
+                <Checkbox checked={selectedCycleIds.indexOf(cycle.id) > -1} />
+                <ListItemText
+                  primary={`${cycle.vegetables?.name} (${cycle.parcels?.name})`}
+                  secondary={new Date(cycle.starts_at).toLocaleDateString()}
+                />
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+      </Box>
+      {selectedCycleIds.length > 0 ? (
+        <BarChart
+          height={300}
+          series={[{ data: costPerHourData, label: 'Coût par Heure (€/h)', color: '#8884d8' }]}
+          xAxis={[{ data: chartLabels, scaleType: 'band' }]}
+          margin={{ top: 10, bottom: 30, left: 40, right: 10 }}
+        />
+      ) : (
+        <Box
+          sx={{
+            height: 300,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <Typography color="textSecondary">
+            Veuillez sélectionner un ou plusieurs cycles pour afficher le rapport.
+          </Typography>
+        </Box>
+      )}
     </Box>
   );
 }
