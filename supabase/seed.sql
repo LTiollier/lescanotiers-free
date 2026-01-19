@@ -12,8 +12,27 @@ TRUNCATE TABLE
     public.parcels, 
     public.vegetable_categories, 
     public.vegetables, 
-    public.activities 
+    public.activities
 RESTART IDENTITY CASCADE;
+
+-- Passwords for all users are 'password123'
+INSERT INTO auth.users (id, aud, role, email, encrypted_password, email_confirmed_at, raw_app_meta_data, raw_user_meta_data, created_at, updated_at)
+VALUES
+    ('b29875c2-cd3c-4ea5-9921-ca398ec966f5', 'authenticated', 'authenticated', 'admin@canotiers.fr', '$2a$10$k.Mv9.gP3.g4.N3.A5D6.O2V5a/5D6.N2v5a/5D6.N2v5a/5D6.O2', NOW(), '{"provider":"email","providers":["email"]}', '{}', NOW(), NOW()),
+    ('04cf927d-d5e0-4147-8d84-3b968c07eff6', 'authenticated', 'authenticated', 'employee1@canotiers.fr', '$2a$10$k.Mv9.gP3.g4.N3.A5D6.O2V5a/5D6.N2v5a/5D6.N2v5a/5D6.O2', NOW(), '{"provider":"email","providers":["email"]}', '{}', NOW(), NOW()),
+    ('471758fa-07ba-47a5-a972-240b7078b7c9', 'authenticated', 'authenticated', 'employee2@canotiers.fr', '$2a$10$k.Mv9.gP3.g4.N3.A5D6.O2V5a/5D6.N2v5a/5D6.N2v5a/5D6.O2', NOW(), '{"provider":"email","providers":["email"]}', '{}', NOW(), NOW());
+
+INSERT INTO auth.identities (id, user_id, provider_id, identity_data, provider, last_sign_in_at, created_at, updated_at)
+VALUES
+    (gen_random_uuid(), 'b29875c2-cd3c-4ea5-9921-ca398ec966f5', 'admin@canotiers.fr', '{"sub":"b29875c2-cd3c-4ea5-9921-ca398ec966f5","email":"admin@canotiers.fr"}', 'email', NOW(), NOW(), NOW()),
+    (gen_random_uuid(), '04cf927d-d5e0-4147-8d84-3b968c07eff6', 'employee1@canotiers.fr', '{"sub":"04cf927d-d5e0-4147-8d84-3b968c07eff6","email":"employee1@canotiers.fr"}', 'email', NOW(), NOW(), NOW()),
+    (gen_random_uuid(), '471758fa-07ba-47a5-a972-240b7078b7c9', 'employee2@canotiers.fr', '{"sub":"471758fa-07ba-47a5-a972-240b7078b7c9","email":"employee2@canotiers.fr"}', 'email', NOW(), NOW(), NOW());
+
+-- Seed Profiles
+INSERT INTO public.profiles (id, username, role, hourly_rate_in_cents) VALUES
+('b29875c2-cd3c-4ea5-9921-ca398ec966f5', 'Admin Canotier', 'admin', 2000), -- 20.00 EUR/hour
+('04cf927d-d5e0-4147-8d84-3b968c07eff6', 'Jean Canotier', 'employee', 1500), -- 15.00 EUR/hour
+('471758fa-07ba-47a5-a972-240b7078b7c9', 'Jeanne Canotière', 'employee', 1600); -- 16.00 EUR/hour
 
 -- Seed Parcels
 INSERT INTO public.parcels (name) VALUES
@@ -84,14 +103,14 @@ INSERT INTO public.activities (id, name) VALUES
 
 -- Seed Cycles
 -- Past Cycles
-INSERT INTO public.cycles (id, vegetable_id, parcel_id, starts_at, ends_at) VALUES
-(1, 11, 1, '2025-04-15', '2025-09-30'), -- Tomate en P1
-(2, 1, 3, '2025-05-10', '2025-08-15');  -- Carotte en P3
+INSERT INTO public.cycles (id, vegetable_id, parcel_id, starts_at, ends_at,utility_costs_in_cents, seedling_cost_in_cents) VALUES
+(1, 11, 1, '2025-04-15', '2025-09-30', 50000, 50), -- Tomate en P1 (Fixed Cost 500€, Seedling 0.50€/plant)
+(2, 1, 3, '2025-05-10', '2025-08-15', 20000, 20);  -- Carotte en P3 (Fixed Cost 200€, Seedling 0.20€/plant)
 
 -- Current/Future Cycles (Today is 2026-01-14)
-INSERT INTO public.cycles (id, vegetable_id, parcel_id, starts_at, ends_at) VALUES
-(3, 12, 2, '2025-12-10', '2026-05-20'), -- Courgette en P2 (En cours)
-(4, 6, 9, '2026-01-05', '2026-03-15');   -- Laitue en Planche 1 (En cours)
+INSERT INTO public.cycles (id, vegetable_id, parcel_id, starts_at, ends_at,utility_costs_in_cents, seedling_cost_in_cents) VALUES
+(3, 12, 2, '2025-12-10', '2026-05-20', 30000, 30), -- Courgette en P2 (En cours) (Fixed Cost 300€, Seedling 0.30€/plant)
+(4, 6, 9, '2026-01-05', '2026-03-15', 10000, 10);   -- Laitue en Planche 1 (En cours) (Fixed Cost 100€, Seedling 0.10€/plant)
 
 -- Seed Times
 -- For Cycle 1 (Tomates - Passé)

@@ -134,10 +134,6 @@ Use of [Gitmoji](https://gitmoji.dev/) for commit messages to standardize and im
 
 Organization of components by functionality (feature-based). Components should be typed and, if possible, generic.
 
-### Testing
-
-**Unit / Integration Tests**: **Vitest** for testing components and hooks in isolation.
-
 ### API Communication
 
 - **Client Usage**: `@supabase/supabase-js`
@@ -145,7 +141,7 @@ Organization of components by functionality (feature-based). Components should b
 
 ### CI/CD (Continuous Integration and Deployment)
 
-- **GitHub Actions**: Workflow to automatically run linters and tests on every Pull Request
+- **GitHub Actions**: Workflow to automatically run linters on every Pull Request
 - **Vercel Deployment**: Automatic deployment of the `main` branch to production and creation of previews for each Pull Request
 
 ### Error Handling

@@ -32,7 +32,9 @@ export type Database = {
           ends_at: string;
           id: number;
           parcel_id: number;
+          seedling_cost_in_cents: number | null;
           starts_at: string;
+          utility_costs_in_cents: number | null;
           vegetable_id: number;
         };
         Insert: {
@@ -40,7 +42,9 @@ export type Database = {
           ends_at: string;
           id?: number;
           parcel_id: number;
+          seedling_cost_in_cents?: number | null;
           starts_at: string;
+          utility_costs_in_cents?: number | null;
           vegetable_id: number;
         };
         Update: {
@@ -48,7 +52,9 @@ export type Database = {
           ends_at?: string;
           id?: number;
           parcel_id?: number;
+          seedling_cost_in_cents?: number | null;
           starts_at?: string;
+          utility_costs_in_cents?: number | null;
           vegetable_id?: number;
         };
         Relationships: [
@@ -89,18 +95,21 @@ export type Database = {
       profiles: {
         Row: {
           created_at: string;
+          hourly_rate_in_cents: number | null;
           id: string;
           role: string;
           username: string;
         };
         Insert: {
           created_at?: string;
+          hourly_rate_in_cents?: number | null;
           id: string;
           role?: string;
           username: string;
         };
         Update: {
           created_at?: string;
+          hourly_rate_in_cents?: number | null;
           id?: string;
           role?: string;
           username?: string;

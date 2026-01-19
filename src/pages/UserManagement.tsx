@@ -35,7 +35,7 @@ import { useState } from 'react';
 import { MobileCard } from '../components/MobileCard';
 import { useAuth } from '../contexts/AuthContext';
 import { usePWA } from '../hooks/usePWA';
-import { useCreateUser, useUpdateUserRole, useUsers } from '../hooks/useUsers';
+import { useCreateUser, useUpdateUserProfile, useUsers } from '../hooks/useUsers';
 import type { Database } from '../types/database.types';
 
 type Profile = Database['public']['Tables']['profiles']['Row'];
@@ -44,13 +44,13 @@ export function UserManagement() {
   const { user: currentUser } = useAuth();
   const { data: users, isLoading, error } = useUsers();
   const createUser = useCreateUser();
-  const updateUserRole = useUpdateUserRole();
+  const updateUserProfile = useUpdateUserProfile();
   const { isOffline } = usePWA();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
   const [formOpen, setFormOpen] = useState(false);
-  const [roleDialogOpen, setRoleDialogOpen] = useState(false);
+  const [editProfileDialogOpen, setEditProfileDialogOpen] = useState(false); // Renamed from roleDialogOpen
   const [selectedUser, setSelectedUser] = useState<Profile | null>(null);
   const [snackbar, setSnackbar] = useState<{
     open: boolean;
@@ -62,25 +62,31 @@ export function UserManagement() {
     severity: 'success',
   });
 
-  // Form state
+  // Form state for creating user
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [username, setUsername] = useState('');
   const [role, setRole] = useState<'admin' | 'employee'>('employee');
+  const [hourlyRateInCents, setHourlyRateInCents] = useState<number | ''>(''); // New state variable
+
+  // Form state for editing user profile
   const [newRole, setNewRole] = useState<'admin' | 'employee'>('employee');
+  const [newHourlyRateInCents, setNewHourlyRateInCents] = useState<number | ''>(''); // New state variable
 
   const handleAdd = () => {
     setEmail('');
     setPassword('');
     setUsername('');
     setRole('employee');
+    setHourlyRateInCents(''); // Reset hourly rate
     setFormOpen(true);
   };
 
-  const handleEditRole = (user: Profile) => {
+  const handleEditProfile = (user: Profile) => {
     setSelectedUser(user);
     setNewRole(user.role as 'admin' | 'employee');
-    setRoleDialogOpen(true);
+    setNewHourlyRateInCents(user.hourly_rate_in_cents ?? ''); // Populate hourly rate
+    setEditProfileDialogOpen(true);
   };
 
   const handleFormSubmit = async (e: React.FormEvent) => {
@@ -110,6 +116,7 @@ export function UserManagement() {
         password,
         username,
         role,
+        hourlyRateInCents: hourlyRateInCents === '' ? null : Number(hourlyRateInCents),
       });
       setSnackbar({
         open: true,
@@ -126,20 +133,21 @@ export function UserManagement() {
     }
   };
 
-  const handleRoleUpdate = async () => {
+  const handleProfileUpdate = async () => {
     if (!selectedUser) return;
 
     try {
-      await updateUserRole.mutateAsync({
+      await updateUserProfile.mutateAsync({
         userId: selectedUser.id,
         role: newRole,
+        hourlyRateInCents: newHourlyRateInCents === '' ? null : Number(newHourlyRateInCents),
       });
       setSnackbar({
         open: true,
-        message: 'Rôle modifié avec succès',
+        message: 'Profil utilisateur modifié avec succès',
         severity: 'success',
       });
-      setRoleDialogOpen(false);
+      setEditProfileDialogOpen(false);
     } catch (err) {
       setSnackbar({
         open: true,
@@ -239,6 +247,12 @@ export function UserManagement() {
                     ),
                   },
                   {
+                    label: 'Taux horaire',
+                    value: user.hourly_rate_in_cents
+                      ? `${user.hourly_rate_in_cents / 100} €/h`
+                      : 'Non défini',
+                  },
+                  {
                     label: 'Date de création',
                     value: new Date(user.created_at).toLocaleDateString('fr-FR'),
                   },
@@ -246,7 +260,7 @@ export function UserManagement() {
                 actions={[
                   {
                     icon: <EditIcon />,
-                    onClick: () => handleEditRole(user),
+                    onClick: () => handleEditProfile(user),
                     color: 'primary',
                     disabled: user.id === currentUser?.id || isOffline,
                   },
@@ -264,6 +278,7 @@ export function UserManagement() {
                   <TableCell>Nom</TableCell>
                   <TableCell>ID Utilisateur</TableCell>
                   <TableCell>Rôle</TableCell>
+                  <TableCell>Taux horaire</TableCell>
                   <TableCell align="right">Date de création</TableCell>
                   <TableCell align="right">Actions</TableCell>
                 </TableRow>
@@ -300,6 +315,13 @@ export function UserManagement() {
                           size="small"
                         />
                       </TableCell>
+                      <TableCell>
+                        <Typography variant="body2">
+                          {user.hourly_rate_in_cents
+                            ? `${user.hourly_rate_in_cents / 100} €/h`
+                            : '—'}
+                        </Typography>
+                      </TableCell>
                       <TableCell align="right">
                         {new Date(user.created_at).toLocaleDateString('fr-FR')}
                       </TableCell>
@@ -309,14 +331,14 @@ export function UserManagement() {
                             isOffline
                               ? 'Indisponible hors-ligne'
                               : user.id === currentUser?.id
-                                ? 'Vous ne pouvez pas modifier votre propre rôle'
+                                ? 'Vous ne pouvez pas modifier votre propre profil'
                                 : ''
                           }
                         >
                           <span>
                             <IconButton
                               size="small"
-                              onClick={() => handleEditRole(user)}
+                              onClick={() => handleEditProfile(user)}
                               color="primary"
                               disabled={user.id === currentUser?.id || isOffline}
                             >
@@ -402,6 +424,14 @@ export function UserManagement() {
                   <MenuItem value="admin">Administrateur</MenuItem>
                 </Select>
               </FormControl>
+              <TextField
+                label="Taux horaire (en centimes)"
+                type="number"
+                value={hourlyRateInCents}
+                onChange={(e) => setHourlyRateInCents(e.target.value ? Number(e.target.value) : '')}
+                fullWidth
+                inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}
+              />
             </Box>
           </DialogContent>
           <DialogActions>
@@ -413,17 +443,17 @@ export function UserManagement() {
         </form>
       </Dialog>
 
-      {/* Edit Role Dialog */}
+      {/* Edit User Profile Dialog */}
       <Dialog
-        open={roleDialogOpen}
-        onClose={() => setRoleDialogOpen(false)}
+        open={editProfileDialogOpen}
+        onClose={() => setEditProfileDialogOpen(false)}
         maxWidth="xs"
         fullWidth
         fullScreen={isMobile}
       >
-        <DialogTitle>Modifier le rôle</DialogTitle>
+        <DialogTitle>Modifier le profil utilisateur</DialogTitle>
         <DialogContent>
-          <Box sx={{ pt: 2 }}>
+          <Box sx={{ pt: 2, display: 'flex', flexDirection: 'column', gap: 2 }}>
             <FormControl fullWidth>
               <InputLabel>Rôle</InputLabel>
               <Select
@@ -435,16 +465,26 @@ export function UserManagement() {
                 <MenuItem value="admin">Administrateur</MenuItem>
               </Select>
             </FormControl>
+            <TextField
+              label="Taux horaire (en centimes)"
+              type="number"
+              value={newHourlyRateInCents}
+              onChange={(e) =>
+                setNewHourlyRateInCents(e.target.value ? Number(e.target.value) : '')
+              }
+              fullWidth
+              inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}
+            />
           </Box>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setRoleDialogOpen(false)}>Annuler</Button>
+          <Button onClick={() => setEditProfileDialogOpen(false)}>Annuler</Button>
           <Button
             variant="contained"
-            onClick={handleRoleUpdate}
-            disabled={updateUserRole.isPending}
+            onClick={handleProfileUpdate}
+            disabled={updateUserProfile.isPending}
           >
-            {updateUserRole.isPending ? 'Modification...' : 'Modifier'}
+            {updateUserProfile.isPending ? 'Modification...' : 'Modifier'}
           </Button>
         </DialogActions>
       </Dialog>

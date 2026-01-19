@@ -9,11 +9,13 @@ interface CreateUserParams {
   password: string;
   username: string;
   role?: 'admin' | 'employee';
+  hourlyRateInCents?: number | null;
 }
 
-interface UpdateUserRoleParams {
+interface UpdateUserProfileParams {
   userId: string;
-  role: 'admin' | 'employee';
+  role?: 'admin' | 'employee';
+  hourlyRateInCents?: number | null;
 }
 
 /**
@@ -43,7 +45,13 @@ export function useCreateUser() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ email, password, username, role = 'employee' }: CreateUserParams) => {
+    mutationFn: async ({
+      email,
+      password,
+      username,
+      role = 'employee',
+      hourlyRateInCents = null,
+    }: CreateUserParams) => {
       // Create auth user using admin API
       const { data: authData, error: authError } = await supabase.auth.signUp({
         email,
@@ -59,12 +67,13 @@ export function useCreateUser() {
       if (authError) throw authError;
       if (!authData.user) throw new Error('Failed to create user');
 
-      // Update profile with role and username
+      // Update profile with role, username and hourly rate
       const { error: profileError } = await supabase
         .from('profiles')
         .update({
           username,
           role,
+          hourly_rate_in_cents: hourlyRateInCents,
         })
         .eq('id', authData.user.id);
 
@@ -79,14 +88,17 @@ export function useCreateUser() {
 }
 
 /**
- * Hook to update a user's role (admin only)
+ * Hook to update a user's profile (admin only)
  */
-export function useUpdateUserRole() {
+export function useUpdateUserProfile() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ userId, role }: UpdateUserRoleParams) => {
-      const { error } = await supabase.from('profiles').update({ role }).eq('id', userId);
+    mutationFn: async ({ userId, role, hourlyRateInCents }: UpdateUserProfileParams) => {
+      const { error } = await supabase
+        .from('profiles')
+        .update({ role, hourly_rate_in_cents: hourlyRateInCents })
+        .eq('id', userId);
 
       if (error) throw error;
     },

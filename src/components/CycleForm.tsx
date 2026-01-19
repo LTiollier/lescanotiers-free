@@ -21,7 +21,14 @@ type Cycle = Database['public']['Tables']['cycles']['Row'];
 interface CycleFormProps {
   open: boolean;
   onClose: () => void;
-  onSubmit: (vegetableId: number, parcelId: number, startsAt: string, endsAt: string) => void;
+  onSubmit: (
+    vegetableId: number,
+    parcelId: number,
+    startsAt: string,
+    endsAt: string,
+    utilityCostsInCents: number | null,
+    seedlingCostInCents: number | null,
+  ) => void;
   cycle?: Cycle | null;
   isLoading?: boolean;
 }
@@ -31,6 +38,8 @@ export function CycleForm({ open, onClose, onSubmit, cycle, isLoading }: CycleFo
   const [parcelId, setParcelId] = useState<number | ''>('');
   const [startsAt, setStartsAt] = useState('');
   const [endsAt, setEndsAt] = useState('');
+  const [utilityCostsInCents, setUtilityCostsInCents] = useState<number | ''>('');
+  const [seedlingCostInCents, setSeedlingCostInCents] = useState<number | ''>('');
 
   const { data: vegetables, isLoading: vegetablesLoading } = useVegetables();
   const { data: parcels, isLoading: parcelsLoading } = useParcels();
@@ -42,11 +51,15 @@ export function CycleForm({ open, onClose, onSubmit, cycle, isLoading }: CycleFo
         setParcelId(cycle.parcel_id);
         setStartsAt(cycle.starts_at);
         setEndsAt(cycle.ends_at);
+        setUtilityCostsInCents(cycle.utility_costs_in_cents ?? '');
+        setSeedlingCostInCents(cycle.seedling_cost_in_cents ?? '');
       } else {
         setVegetableId('');
         setParcelId('');
         setStartsAt('');
         setEndsAt('');
+        setUtilityCostsInCents('');
+        setSeedlingCostInCents('');
       }
     }
   }, [cycle, open]);
@@ -54,7 +67,14 @@ export function CycleForm({ open, onClose, onSubmit, cycle, isLoading }: CycleFo
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (vegetableId && parcelId && startsAt && endsAt) {
-      onSubmit(Number(vegetableId), Number(parcelId), startsAt, endsAt);
+      onSubmit(
+        Number(vegetableId),
+        Number(parcelId),
+        startsAt,
+        endsAt,
+        utilityCostsInCents === '' ? null : Number(utilityCostsInCents),
+        seedlingCostInCents === '' ? null : Number(seedlingCostInCents),
+      );
     }
   };
 
@@ -137,6 +157,28 @@ export function CycleForm({ open, onClose, onSubmit, cycle, isLoading }: CycleFo
                 shrink: true,
               },
             }}
+          />
+
+          <TextField
+            margin="dense"
+            label="Coût en eau et électricité du cycle (en centimes)"
+            type="number"
+            fullWidth
+            value={utilityCostsInCents}
+            onChange={(e) => setUtilityCostsInCents(e.target.value ? Number(e.target.value) : '')}
+            disabled={isLoading}
+            inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}
+          />
+
+          <TextField
+            margin="dense"
+            label="Coût unitaire des plants (en centimes)"
+            type="number"
+            fullWidth
+            value={seedlingCostInCents}
+            onChange={(e) => setSeedlingCostInCents(e.target.value ? Number(e.target.value) : '')}
+            disabled={isLoading}
+            inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}
           />
         </DialogContent>
         <DialogActions>

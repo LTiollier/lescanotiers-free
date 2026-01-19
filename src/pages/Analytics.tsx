@@ -1,5 +1,6 @@
 import { Box, Container, Grid, Paper, Typography } from '@mui/material';
 import { CyclesComparisonChart } from '../components/analytics/CyclesComparisonChart';
+import { ProductionCostChart } from '../components/analytics/ProductionCostChart';
 import { TaskDistributionChart } from '../components/analytics/TaskDistributionChart';
 
 export function Analytics() {
@@ -24,6 +25,13 @@ export function Analytics() {
         <Grid size={{ xs: 12 }}>
           <Paper sx={{ p: 3, display: 'flex', flexDirection: 'column' }}>
             <TaskDistributionChart />
+          </Paper>
+        </Grid>
+
+        {/* New Production Cost Chart */}
+        <Grid size={{ xs: 12 }}>
+          <Paper sx={{ p: 3, display: 'flex', flexDirection: 'column' }}>
+            <ProductionCostChart />
           </Paper>
         </Grid>
       </Grid>
