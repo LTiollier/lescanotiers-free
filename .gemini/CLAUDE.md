@@ -1,1 +1,0 @@
-/Users/leoelmy/Projects/LesCanotiers/.gemini/GEMINI.md
