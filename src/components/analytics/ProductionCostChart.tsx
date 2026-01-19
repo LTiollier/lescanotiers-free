@@ -129,7 +129,7 @@ export function ProductionCostChart() {
       const costPerHour = totalHours > 0 ? totalCycleCostInCents / 100 / totalHours : 0;
 
       return {
-        cycleName: `${relatedVegetable?.name || 'Inconnu'} - ${cycle.starts_at}`,
+        cycleName: `${relatedVegetable?.name || 'Inconnu'} - ${new Date(cycle.starts_at).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' })}`,
         costPerHour: costPerHour,
       };
     });
@@ -161,7 +161,11 @@ export function ProductionCostChart() {
                 <Checkbox checked={selectedCycleIds.indexOf(cycle.id) > -1} />
                 <ListItemText
                   primary={`${cycle.vegetables?.name} (${cycle.parcels?.name})`}
-                  secondary={new Date(cycle.starts_at).toLocaleDateString()}
+                  secondary={new Date(cycle.starts_at).toLocaleDateString('fr-FR', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric',
+                  })}
                 />
               </MenuItem>
             ))}
