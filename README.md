@@ -29,11 +29,11 @@ Application de gestion pour Les Canotiers - Club de canoë-kayak.
 npm install
 
 # Copier le fichier d'environnement
-cp .env.example .env.local
+cp .env.example .env
 
-# Configurer les variables d'environnement dans .env.local
+# Configurer les variables d'environnement dans .env
 # VITE_SUPABASE_URL=votre_url_supabase
-# VITE_SUPABASE_ANON_KEY=votre_clé_anon
+# VITE_SUPABASE_PUBLISHABLE_KEY=votre_clé_publique
 ```
 
 ### Commandes Disponibles
@@ -150,7 +150,7 @@ Consultez [DEPLOYMENT.md](./DEPLOYMENT.md) pour les instructions détaillées.
 
 **Variables d'environnement requises sur Vercel :**
 - `VITE_SUPABASE_URL`
-- `VITE_SUPABASE_ANON_KEY`
+- `VITE_SUPABASE_PUBLISHABLE_KEY`
 
 ## Scripts Supabase
 

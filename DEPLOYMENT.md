@@ -8,7 +8,7 @@ Ce projet est configuré pour être déployé automatiquement sur Vercel avec in
 
 - Un compte Vercel (connectez-vous avec GitHub)
 - Le projet GitHub "Les Canotiers" accessible
-- Les variables d'environnement Supabase (URL et Anon Key)
+- Les variables d'environnement Supabase (URL et Publishable Key)
 
 ### Étape 1 : Importer le Projet sur Vercel
 
@@ -25,14 +25,14 @@ Dans les paramètres du projet Vercel, ajoutez les variables suivantes :
 
 ```
 VITE_SUPABASE_URL=https://votre-projet.supabase.co
-VITE_SUPABASE_ANON_KEY=votre_clé_anon_publique
+VITE_SUPABASE_PUBLISHABLE_KEY=votre_clé_publique
 ```
 
 **Où trouver ces valeurs ?**
 1. Connectez-vous à [Supabase](https://app.supabase.com)
 2. Sélectionnez votre projet
 3. Allez dans **Settings > API**
-4. Copiez l'**URL** et la **anon public key**
+4. Copiez l'**URL** et la **publishable key**
 
 #### Configuration des Environnements
 
