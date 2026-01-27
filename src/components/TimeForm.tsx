@@ -8,7 +8,6 @@ import {
   Dialog,
   DialogContent,
   DialogTitle,
-  TextField,
   Typography,
   useMediaQuery,
   useTheme,
@@ -26,13 +25,7 @@ type Time = Database['public']['Tables']['times']['Row'];
 interface TimeFormProps {
   open: boolean;
   onClose: () => void;
-  onSubmit: (
-    cycleId: number,
-    activityId: number,
-    date: string,
-    minutes: number,
-    quantity: number | null,
-  ) => void;
+  onSubmit: (cycleId: number, activityId: number, date: string, minutes: number) => void;
   time?: Time | null;
   isLoading?: boolean;
 }
@@ -55,15 +48,12 @@ const DURATION_OPTIONS = [
   { label: '7h', value: 420 },
 ];
 
-export function TimeForm({ open, onClose, onSubmit, time, isLoading }: TimeFormProps) {
-  const [step, setStep] = useState<'cycle' | 'activity' | 'date' | 'duration' | 'quantity'>(
-    'cycle',
-  );
+export function TimeForm({ open, onClose, onSubmit, time }: TimeFormProps) {
+  const [step, setStep] = useState<'cycle' | 'activity' | 'date' | 'duration'>('cycle');
   const [cycleId, setCycleId] = useState<number | null>(null);
   const [activityId, setActivityId] = useState<number | null>(null);
   const [date, setDate] = useState<Dayjs | null>(dayjs());
   const [minutes, setMinutes] = useState<number | null>(null);
-  const [quantity, setQuantity] = useState<number | ''>('');
 
   const { data: cycles, isLoading: cyclesLoading } = useCycles();
   const { data: activities, isLoading: activitiesLoading } = useActivities();
@@ -87,14 +77,12 @@ export function TimeForm({ open, onClose, onSubmit, time, isLoading }: TimeFormP
         setActivityId(time.activity_id);
         setDate(dayjs(time.date));
         setMinutes(time.minutes);
-        setQuantity(time.quantity || '');
         setStep('cycle');
       } else {
         setCycleId(null);
         setActivityId(null);
         setDate(dayjs());
         setMinutes(null);
-        setQuantity('');
         setStep('cycle');
       }
     }
@@ -118,13 +106,14 @@ export function TimeForm({ open, onClose, onSubmit, time, isLoading }: TimeFormP
 
   const handleDurationSelect = (mins: number) => {
     setMinutes(mins);
-    setStep('quantity');
+    handleSubmit(mins);
   };
 
-  const handleSubmit = () => {
-    if (cycleId && activityId && date && minutes) {
+  const handleSubmit = (finalMinutes?: number) => {
+    const mins = finalMinutes || minutes;
+    if (cycleId && activityId && date && mins) {
       const dateStr = date.format('YYYY-MM-DD');
-      onSubmit(cycleId, activityId, dateStr, minutes, quantity ? Number(quantity) : null);
+      onSubmit(cycleId, activityId, dateStr, mins);
     }
   };
 
@@ -138,8 +127,6 @@ export function TimeForm({ open, onClose, onSubmit, time, isLoading }: TimeFormP
         return 'Choisissez la date';
       case 'duration':
         return 'Durée de travail';
-      case 'quantity':
-        return 'Quantité récoltée (optionnel)';
       default:
         return '';
     }
@@ -195,14 +182,14 @@ export function TimeForm({ open, onClose, onSubmit, time, isLoading }: TimeFormP
           )}
 
           {/* Date */}
-          {(step === 'duration' || step === 'quantity') && date && (
+          {step === 'duration' && date && (
             <Typography variant="body2">
               <strong>Date :</strong> {date.format('DD/MM/YYYY')}
             </Typography>
           )}
 
           {/* Duration */}
-          {step === 'quantity' && minutes && (
+          {minutes && (
             <Typography variant="body2">
               <strong>Durée :</strong> {Math.floor(minutes / 60)}h
               {minutes % 60 > 0 ? (minutes % 60).toString().padStart(2, '0') : ''}
@@ -449,48 +436,6 @@ export function TimeForm({ open, onClose, onSubmit, time, isLoading }: TimeFormP
             <Button onClick={() => setStep('date')} sx={{ mt: 2 }} fullWidth>
               Retour
             </Button>
-          </Box>
-        )}
-
-        {/* Step 5: Quantity Selection */}
-
-        {step === 'quantity' && (
-          <Box>
-            <Box
-              sx={{
-                gap: 2,
-
-                mb: 3,
-              }}
-            >
-              <TextField
-                label="Quantité (Kg, unités, etc..)"
-                type="number"
-                value={quantity}
-                onChange={(e) => setQuantity(e.target.value ? Number(e.target.value) : '')}
-                slotProps={{
-                  htmlInput: { min: 0, step: 0.1 },
-                }}
-                fullWidth
-                sx={{
-                  '& .MuiInputBase-root': {
-                    height: 80,
-
-                    fontSize: '1.5rem',
-                  },
-                }}
-              />
-            </Box>
-
-            <Box sx={{ display: 'flex', gap: 2 }}>
-              <Button onClick={() => setStep('duration')} fullWidth>
-                Retour
-              </Button>
-
-              <Button onClick={handleSubmit} variant="contained" fullWidth disabled={isLoading}>
-                {isLoading ? 'Enregistrement...' : 'Valider'}
-              </Button>
-            </Box>
           </Box>
         )}
       </DialogContent>

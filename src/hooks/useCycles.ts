@@ -9,6 +9,7 @@ type CycleUpdate = Database['public']['Tables']['cycles']['Update'];
 export interface CycleWithRelations extends Cycle {
   vegetables?: { id: number; name: string; image_url: string | null };
   parcels?: { id: number; name: string };
+  quantity: number | null;
 }
 
 /**

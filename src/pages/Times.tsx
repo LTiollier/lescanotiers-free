@@ -76,7 +76,6 @@ export function Times() {
     activityId: number,
     date: string,
     minutes: number,
-    quantity: number | null,
   ) => {
     if (!user) return;
 
@@ -89,7 +88,6 @@ export function Times() {
             activity_id: activityId,
             date,
             minutes,
-            quantity,
           },
         });
         setSnackbar({ open: true, message: 'Temps modifié avec succès', severity: 'success' });
@@ -100,7 +98,6 @@ export function Times() {
           activity_id: activityId,
           date,
           minutes,
-          quantity,
         });
         setSnackbar({ open: true, message: 'Temps ajouté avec succès', severity: 'success' });
       }
@@ -240,14 +237,6 @@ export function Times() {
                     label: 'Durée',
                     value: <Chip label={formatDuration(time.minutes)} size="small" />,
                   },
-                  {
-                    label: 'Quantité',
-                    value: time.quantity ? (
-                      <Chip label={time.quantity} size="small" color="info" />
-                    ) : (
-                      '-'
-                    ),
-                  },
                 ]}
                 actions={
                   canEditTime(time)
@@ -287,7 +276,6 @@ export function Times() {
                   <TableCell>Cycle</TableCell>
                   <TableCell>Activité</TableCell>
                   <TableCell>Durée</TableCell>
-                  <TableCell>Quantité</TableCell>
                   <TableCell align="right">Actions</TableCell>
                 </TableRow>
               </TableHead>
@@ -328,13 +316,6 @@ export function Times() {
                       </TableCell>
                       <TableCell>
                         <Chip label={formatDuration(time.minutes)} size="small" />
-                      </TableCell>
-                      <TableCell>
-                        {time.quantity ? (
-                          <Chip label={time.quantity} size="small" color="info" />
-                        ) : (
-                          '-'
-                        )}
                       </TableCell>
                       <TableCell align="right">
                         {canEditTime(time) && (

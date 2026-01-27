@@ -1,10 +1,30 @@
 export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[];
 
 export type Database = {
-  // Allows to automatically instantiate createClient with right options
-  // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
-  __InternalSupabase: {
-    PostgrestVersion: '14.1';
+  graphql_public: {
+    Tables: {
+      [_ in never]: never;
+    };
+    Views: {
+      [_ in never]: never;
+    };
+    Functions: {
+      graphql: {
+        Args: {
+          extensions?: Json;
+          operationName?: string;
+          query?: string;
+          variables?: Json;
+        };
+        Returns: Json;
+      };
+    };
+    Enums: {
+      [_ in never]: never;
+    };
+    CompositeTypes: {
+      [_ in never]: never;
+    };
   };
   public: {
     Tables: {
@@ -32,6 +52,7 @@ export type Database = {
           ends_at: string;
           id: number;
           parcel_id: number;
+          quantity: number | null;
           seedling_cost_in_cents: number | null;
           starts_at: string;
           utility_costs_in_cents: number | null;
@@ -42,6 +63,7 @@ export type Database = {
           ends_at: string;
           id?: number;
           parcel_id: number;
+          quantity?: number | null;
           seedling_cost_in_cents?: number | null;
           starts_at: string;
           utility_costs_in_cents?: number | null;
@@ -52,6 +74,7 @@ export type Database = {
           ends_at?: string;
           id?: number;
           parcel_id?: number;
+          quantity?: number | null;
           seedling_cost_in_cents?: number | null;
           starts_at?: string;
           utility_costs_in_cents?: number | null;
@@ -124,7 +147,6 @@ export type Database = {
           date: string;
           id: number;
           minutes: number;
-          quantity: number | null;
           user_id: string;
         };
         Insert: {
@@ -134,7 +156,6 @@ export type Database = {
           date: string;
           id?: number;
           minutes: number;
-          quantity?: number | null;
           user_id: string;
         };
         Update: {
@@ -144,7 +165,6 @@ export type Database = {
           date?: string;
           id?: number;
           minutes?: number;
-          quantity?: number | null;
           user_id?: string;
         };
         Relationships: [
@@ -353,6 +373,9 @@ export type CompositeTypes<
     : never;
 
 export const Constants = {
+  graphql_public: {
+    Enums: {},
+  },
   public: {
     Enums: {},
   },

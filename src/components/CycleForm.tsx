@@ -28,6 +28,7 @@ interface CycleFormProps {
     endsAt: string,
     utilityCostsInCents: number | null,
     seedlingCostInCents: number | null,
+    quantity: number | null,
   ) => void;
   cycle?: Cycle | null;
   isLoading?: boolean;
@@ -40,6 +41,7 @@ export function CycleForm({ open, onClose, onSubmit, cycle, isLoading }: CycleFo
   const [endsAt, setEndsAt] = useState('');
   const [utilityCostsInCents, setUtilityCostsInCents] = useState<number | ''>('');
   const [seedlingCostInCents, setSeedlingCostInCents] = useState<number | ''>('');
+  const [quantity, setQuantity] = useState<number | ''>('');
 
   const { data: vegetables, isLoading: vegetablesLoading } = useVegetables();
   const { data: parcels, isLoading: parcelsLoading } = useParcels();
@@ -53,6 +55,7 @@ export function CycleForm({ open, onClose, onSubmit, cycle, isLoading }: CycleFo
         setEndsAt(cycle.ends_at);
         setUtilityCostsInCents(cycle.utility_costs_in_cents ?? '');
         setSeedlingCostInCents(cycle.seedling_cost_in_cents ?? '');
+        setQuantity(cycle.quantity ?? '');
       } else {
         setVegetableId('');
         setParcelId('');
@@ -60,6 +63,7 @@ export function CycleForm({ open, onClose, onSubmit, cycle, isLoading }: CycleFo
         setEndsAt('');
         setUtilityCostsInCents('');
         setSeedlingCostInCents('');
+        setQuantity('');
       }
     }
   }, [cycle, open]);
@@ -74,6 +78,7 @@ export function CycleForm({ open, onClose, onSubmit, cycle, isLoading }: CycleFo
         endsAt,
         utilityCostsInCents === '' ? null : Number(utilityCostsInCents),
         seedlingCostInCents === '' ? null : Number(seedlingCostInCents),
+        quantity === '' ? null : Number(quantity),
       );
     }
   };
@@ -179,6 +184,17 @@ export function CycleForm({ open, onClose, onSubmit, cycle, isLoading }: CycleFo
             onChange={(e) => setSeedlingCostInCents(e.target.value ? Number(e.target.value) : '')}
             disabled={isLoading}
             inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}
+          />
+
+          <TextField
+            margin="dense"
+            label="Quantité totale récoltée"
+            type="number"
+            fullWidth
+            value={quantity}
+            onChange={(e) => setQuantity(e.target.value ? Number(e.target.value) : '')}
+            disabled={isLoading}
+            inputProps={{ step: 0.1 }}
           />
         </DialogContent>
         <DialogActions>

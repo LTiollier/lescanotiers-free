@@ -104,10 +104,7 @@ export function ProductionCostChart() {
 
       let seedlingCost = 0;
       if (cycle.seedling_cost_in_cents !== null && cycle.seedling_cost_in_cents !== undefined) {
-        const plantingActivityId = plantingActivity.id;
-        const plantingTimes = cycleTimes.filter((time) => time.activity_id === plantingActivityId);
-        const totalSeedlings = plantingTimes.reduce((sum, time) => sum + (time.quantity || 0), 0);
-        seedlingCost = cycle.seedling_cost_in_cents * totalSeedlings;
+        seedlingCost = cycle.seedling_cost_in_cents * (cycle.quantity || 0);
       }
 
       let laborCost = 0;

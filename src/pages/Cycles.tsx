@@ -78,6 +78,9 @@ export function Cycles() {
     parcelId: number,
     startsAt: string,
     endsAt: string,
+    utilityCostsInCents: number | null,
+    seedlingCostInCents: number | null,
+    quantity: number | null,
   ) => {
     try {
       if (selectedCycle) {
@@ -88,6 +91,9 @@ export function Cycles() {
             parcel_id: parcelId,
             starts_at: startsAt,
             ends_at: endsAt,
+            utility_costs_in_cents: utilityCostsInCents,
+            seedling_cost_in_cents: seedlingCostInCents,
+            quantity: quantity,
           },
         });
         setSnackbar({ open: true, message: 'Cycle modifié avec succès', severity: 'success' });
@@ -97,6 +103,9 @@ export function Cycles() {
           parcel_id: parcelId,
           starts_at: startsAt,
           ends_at: endsAt,
+          utility_costs_in_cents: utilityCostsInCents,
+          seedling_cost_in_cents: seedlingCostInCents,
+          quantity: quantity,
         });
         setSnackbar({ open: true, message: 'Cycle ajouté avec succès', severity: 'success' });
       }
@@ -231,6 +240,14 @@ export function Cycles() {
                       label: 'Statut',
                       value: statusChip,
                     },
+                    {
+                      label: 'Quantité',
+                      value: cycle.quantity ? (
+                        <Chip label={`${cycle.quantity} kg`} size="small" color="info" />
+                      ) : (
+                        '-'
+                      ),
+                    },
                   ]}
                   actions={
                     isAdmin
@@ -267,6 +284,7 @@ export function Cycles() {
                   <TableCell>Date de début</TableCell>
                   <TableCell>Date de fin</TableCell>
                   <TableCell>Statut</TableCell>
+                  <TableCell>Quantité</TableCell>
                   {isAdmin && <TableCell align="right">Actions</TableCell>}
                 </TableRow>
               </TableHead>
@@ -308,6 +326,13 @@ export function Cycles() {
                           {isActive && <Chip label="En cours" size="small" color="success" />}
                           {isUpcoming && <Chip label="À venir" size="small" color="info" />}
                           {isPast && <Chip label="Terminé" size="small" color="default" />}
+                        </TableCell>
+                        <TableCell>
+                          {cycle.quantity ? (
+                            <Chip label={`${cycle.quantity} kg`} size="small" color="info" />
+                          ) : (
+                            '-'
+                          )}
                         </TableCell>
                         {isAdmin && (
                           <TableCell align="right">
