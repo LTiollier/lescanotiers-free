@@ -254,19 +254,19 @@ export function Cycles() {
                   actions={
                     isAdmin
                       ? [
-                        {
-                          icon: <EditIcon />,
-                          onClick: () => handleEdit(cycle),
-                          color: 'primary',
-                          disabled: isOffline,
-                        },
-                        {
-                          icon: <DeleteIcon />,
-                          onClick: () => handleDelete(cycle),
-                          color: 'error',
-                          disabled: isOffline,
-                        },
-                      ]
+                          {
+                            icon: <EditIcon />,
+                            onClick: () => handleEdit(cycle),
+                            color: 'primary',
+                            disabled: isOffline,
+                          },
+                          {
+                            icon: <DeleteIcon />,
+                            onClick: () => handleDelete(cycle),
+                            color: 'error',
+                            disabled: isOffline,
+                          },
+                        ]
                       : undefined
                   }
                 />

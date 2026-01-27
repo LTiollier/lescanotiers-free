@@ -167,3 +167,9 @@ INSERT INTO public.times (user_id, cycle_id, activity_id, date, minutes) VALUES
 ('471758fa-07ba-47a5-a972-240b7078b7c9', 4, 1, '2026-01-05', 60),  -- Préparation
 ('04cf927d-d5e0-4147-8d84-3b968c07eff6', 4, 3, '2026-01-06', 120), -- Plantation
 ('b29875c2-cd3c-4ea5-9921-ca398ec966f5', 4, 4, '2026-01-12', 45);  -- Désherbage
+
+-- Synchronize sequences for tables with explicit IDs
+SELECT setval(pg_get_serial_sequence('public.vegetables', 'id'), COALESCE(MAX(id), 0) + 1, false) FROM public.vegetables;
+SELECT setval(pg_get_serial_sequence('public.activities', 'id'), COALESCE(MAX(id), 0) + 1, false) FROM public.activities;
+SELECT setval(pg_get_serial_sequence('public.cycles', 'id'), COALESCE(MAX(id), 0) + 1, false) FROM public.cycles;
+SELECT setval(pg_get_serial_sequence('public.vegetable_categories', 'id'), COALESCE(MAX(id), 0) + 1, false) FROM public.vegetable_categories;
