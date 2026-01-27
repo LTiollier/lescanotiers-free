@@ -63,10 +63,10 @@ export function TimeForm({ open, onClose, onSubmit, time }: TimeFormProps) {
   const activeCycles = cycles?.filter((cycle) => {
     const today = dayjs();
     const start = dayjs(cycle.starts_at);
-    const end = dayjs(cycle.ends_at);
+    const end = cycle.ends_at ? dayjs(cycle.ends_at) : null;
     return (
       (today.isAfter(start, 'day') || today.isSame(start, 'day')) &&
-      (today.isBefore(end, 'day') || today.isSame(end, 'day'))
+      (!end || today.isBefore(end, 'day') || today.isSame(end, 'day'))
     );
   });
 

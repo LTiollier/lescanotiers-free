@@ -77,7 +77,7 @@ export function Cycles() {
     vegetableId: number,
     parcelId: number,
     startsAt: string,
-    endsAt: string,
+    endsAt: string | null,
     utilityCostsInCents: number | null,
     seedlingCostInCents: number | null,
     quantity: number | null,
@@ -194,8 +194,8 @@ export function Cycles() {
             cycles?.map((cycle) => {
               const today = new Date();
               const startsAt = new Date(cycle.starts_at);
-              const endsAt = new Date(cycle.ends_at);
-              const isActive = today >= startsAt && today <= endsAt;
+              const endsAt = cycle.ends_at ? new Date(cycle.ends_at) : null;
+              const isActive = today >= startsAt && (!endsAt || today <= endsAt);
               const isUpcoming = today < startsAt;
 
               let statusChip: React.ReactNode;
@@ -234,7 +234,9 @@ export function Cycles() {
                     },
                     {
                       label: 'Date de fin',
-                      value: new Date(cycle.ends_at).toLocaleDateString('fr-FR'),
+                      value: cycle.ends_at
+                        ? new Date(cycle.ends_at).toLocaleDateString('fr-FR')
+                        : 'En cours',
                     },
                     {
                       label: 'Statut',
@@ -252,19 +254,19 @@ export function Cycles() {
                   actions={
                     isAdmin
                       ? [
-                          {
-                            icon: <EditIcon />,
-                            onClick: () => handleEdit(cycle),
-                            color: 'primary',
-                            disabled: isOffline,
-                          },
-                          {
-                            icon: <DeleteIcon />,
-                            onClick: () => handleDelete(cycle),
-                            color: 'error',
-                            disabled: isOffline,
-                          },
-                        ]
+                        {
+                          icon: <EditIcon />,
+                          onClick: () => handleEdit(cycle),
+                          color: 'primary',
+                          disabled: isOffline,
+                        },
+                        {
+                          icon: <DeleteIcon />,
+                          onClick: () => handleDelete(cycle),
+                          color: 'error',
+                          disabled: isOffline,
+                        },
+                      ]
                       : undefined
                   }
                 />
@@ -301,10 +303,10 @@ export function Cycles() {
                   cycles?.map((cycle) => {
                     const today = new Date();
                     const startsAt = new Date(cycle.starts_at);
-                    const endsAt = new Date(cycle.ends_at);
-                    const isActive = today >= startsAt && today <= endsAt;
+                    const endsAt = cycle.ends_at ? new Date(cycle.ends_at) : null;
+                    const isActive = today >= startsAt && (!endsAt || today <= endsAt);
                     const isUpcoming = today < startsAt;
-                    const isPast = today > endsAt;
+                    const isPast = endsAt ? today > endsAt : false;
 
                     return (
                       <TableRow key={cycle.id}>
@@ -321,7 +323,11 @@ export function Cycles() {
                         <TableCell>
                           {new Date(cycle.starts_at).toLocaleDateString('fr-FR')}
                         </TableCell>
-                        <TableCell>{new Date(cycle.ends_at).toLocaleDateString('fr-FR')}</TableCell>
+                        <TableCell>
+                          {cycle.ends_at
+                            ? new Date(cycle.ends_at).toLocaleDateString('fr-FR')
+                            : 'En cours'}
+                        </TableCell>
                         <TableCell>
                           {isActive && <Chip label="En cours" size="small" color="success" />}
                           {isUpcoming && <Chip label="À venir" size="small" color="info" />}

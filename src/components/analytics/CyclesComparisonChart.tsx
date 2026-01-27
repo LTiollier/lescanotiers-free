@@ -128,7 +128,7 @@ export function CyclesComparisonChart() {
             }}
           >
             {activeCycles.map((cycle) => {
-              const isFinished = new Date(cycle.ends_at) < new Date();
+              const isFinished = cycle.ends_at ? new Date(cycle.ends_at) < new Date() : false;
               const cycleTimes = dataByCycle[cycle.id] || [];
               const totalHours = _.sumBy(cycleTimes, 'minutes') / 60;
 

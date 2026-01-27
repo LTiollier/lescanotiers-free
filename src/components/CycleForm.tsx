@@ -25,7 +25,7 @@ interface CycleFormProps {
     vegetableId: number,
     parcelId: number,
     startsAt: string,
-    endsAt: string,
+    endsAt: string | null,
     utilityCostsInCents: number | null,
     seedlingCostInCents: number | null,
     quantity: number | null,
@@ -38,7 +38,7 @@ export function CycleForm({ open, onClose, onSubmit, cycle, isLoading }: CycleFo
   const [vegetableId, setVegetableId] = useState<number | ''>('');
   const [parcelId, setParcelId] = useState<number | ''>('');
   const [startsAt, setStartsAt] = useState('');
-  const [endsAt, setEndsAt] = useState('');
+  const [endsAt, setEndsAt] = useState<string>('');
   const [utilityCostsInCents, setUtilityCostsInCents] = useState<number | ''>('');
   const [seedlingCostInCents, setSeedlingCostInCents] = useState<number | ''>('');
   const [quantity, setQuantity] = useState<number | ''>('');
@@ -52,7 +52,7 @@ export function CycleForm({ open, onClose, onSubmit, cycle, isLoading }: CycleFo
         setVegetableId(cycle.vegetable_id);
         setParcelId(cycle.parcel_id);
         setStartsAt(cycle.starts_at);
-        setEndsAt(cycle.ends_at);
+        setEndsAt(cycle.ends_at ?? '');
         setUtilityCostsInCents(cycle.utility_costs_in_cents ?? '');
         setSeedlingCostInCents(cycle.seedling_cost_in_cents ?? '');
         setQuantity(cycle.quantity ?? '');
@@ -70,12 +70,12 @@ export function CycleForm({ open, onClose, onSubmit, cycle, isLoading }: CycleFo
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (vegetableId && parcelId && startsAt && endsAt) {
+    if (vegetableId && parcelId && startsAt) {
       onSubmit(
         Number(vegetableId),
         Number(parcelId),
         startsAt,
-        endsAt,
+        endsAt === '' ? null : endsAt,
         utilityCostsInCents === '' ? null : Number(utilityCostsInCents),
         seedlingCostInCents === '' ? null : Number(seedlingCostInCents),
         quantity === '' ? null : Number(quantity),
@@ -83,7 +83,7 @@ export function CycleForm({ open, onClose, onSubmit, cycle, isLoading }: CycleFo
     }
   };
 
-  const isFormValid = vegetableId && parcelId && startsAt && endsAt;
+  const isFormValid = vegetableId && parcelId && startsAt;
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
@@ -153,7 +153,6 @@ export function CycleForm({ open, onClose, onSubmit, cycle, isLoading }: CycleFo
             label="Date de fin"
             type="date"
             fullWidth
-            required
             value={endsAt}
             onChange={(e) => setEndsAt(e.target.value)}
             disabled={isLoading}
