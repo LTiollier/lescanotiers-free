@@ -16,17 +16,44 @@ TRUNCATE TABLE
 RESTART IDENTITY CASCADE;
 
 -- Passwords for all users are 'password123'
-INSERT INTO auth.users (id, aud, role, email, encrypted_password, email_confirmed_at, raw_app_meta_data, raw_user_meta_data, created_at, updated_at)
+INSERT INTO auth.users (
+    instance_id,
+    id,
+    aud,
+    role,
+    email,
+    encrypted_password,
+    email_confirmed_at,
+    recovery_sent_at,
+    last_sign_in_at,
+    raw_app_meta_data,
+    raw_user_meta_data,
+    created_at,
+    updated_at,
+    confirmation_token,
+    email_change,
+    email_change_token_new,
+    recovery_token
+)
 VALUES
-    ('b29875c2-cd3c-4ea5-9921-ca398ec966f5', 'authenticated', 'authenticated', 'admin@canotiers.fr', '$2a$10$k.Mv9.gP3.g4.N3.A5D6.O2V5a/5D6.N2v5a/5D6.N2v5a/5D6.O2', NOW(), '{"provider":"email","providers":["email"]}', '{}', NOW(), NOW()),
-    ('04cf927d-d5e0-4147-8d84-3b968c07eff6', 'authenticated', 'authenticated', 'employee1@canotiers.fr', '$2a$10$k.Mv9.gP3.g4.N3.A5D6.O2V5a/5D6.N2v5a/5D6.N2v5a/5D6.O2', NOW(), '{"provider":"email","providers":["email"]}', '{}', NOW(), NOW()),
-    ('471758fa-07ba-47a5-a972-240b7078b7c9', 'authenticated', 'authenticated', 'employee2@canotiers.fr', '$2a$10$k.Mv9.gP3.g4.N3.A5D6.O2V5a/5D6.N2v5a/5D6.N2v5a/5D6.O2', NOW(), '{"provider":"email","providers":["email"]}', '{}', NOW(), NOW());
+    ('00000000-0000-0000-0000-000000000000', 'b29875c2-cd3c-4ea5-9921-ca398ec966f5', 'authenticated', 'authenticated', 'admin@canotiers.fr', crypt('password123', gen_salt('bf')), NOW(), NOW(), NOW(), '{"provider":"email","providers":["email"]}', '{}', NOW(), NOW(), '', '', '', ''),
+    ('00000000-0000-0000-0000-000000000000', '04cf927d-d5e0-4147-8d84-3b968c07eff6', 'authenticated', 'authenticated', 'employee1@canotiers.fr', crypt('password123', gen_salt('bf')), NOW(), NOW(), NOW(), '{"provider":"email","providers":["email"]}', '{}', NOW(), NOW(), '', '', '', ''),
+    ('00000000-0000-0000-0000-000000000000', '471758fa-07ba-47a5-a972-240b7078b7c9', 'authenticated', 'authenticated', 'employee2@canotiers.fr', crypt('password123', gen_salt('bf')), NOW(), NOW(), NOW(), '{"provider":"email","providers":["email"]}', '{}', NOW(), NOW(), '', '', '', '');
 
-INSERT INTO auth.identities (id, user_id, provider_id, identity_data, provider, last_sign_in_at, created_at, updated_at)
+INSERT INTO auth.identities (
+    id,
+    user_id,
+    identity_data,
+    provider_id,
+    provider,
+    last_sign_in_at,
+    created_at,
+    updated_at
+)
 VALUES
-    (gen_random_uuid(), 'b29875c2-cd3c-4ea5-9921-ca398ec966f5', 'admin@canotiers.fr', '{"sub":"b29875c2-cd3c-4ea5-9921-ca398ec966f5","email":"admin@canotiers.fr"}', 'email', NOW(), NOW(), NOW()),
-    (gen_random_uuid(), '04cf927d-d5e0-4147-8d84-3b968c07eff6', 'employee1@canotiers.fr', '{"sub":"04cf927d-d5e0-4147-8d84-3b968c07eff6","email":"employee1@canotiers.fr"}', 'email', NOW(), NOW(), NOW()),
-    (gen_random_uuid(), '471758fa-07ba-47a5-a972-240b7078b7c9', 'employee2@canotiers.fr', '{"sub":"471758fa-07ba-47a5-a972-240b7078b7c9","email":"employee2@canotiers.fr"}', 'email', NOW(), NOW(), NOW());
+    (gen_random_uuid(), 'b29875c2-cd3c-4ea5-9921-ca398ec966f5', format('{"sub":"%s","email":"%s"}', 'b29875c2-cd3c-4ea5-9921-ca398ec966f5', 'admin@canotiers.fr')::jsonb, 'b29875c2-cd3c-4ea5-9921-ca398ec966f5', 'email', NOW(), NOW(), NOW()),
+    (gen_random_uuid(), '04cf927d-d5e0-4147-8d84-3b968c07eff6', format('{"sub":"%s","email":"%s"}', '04cf927d-d5e0-4147-8d84-3b968c07eff6', 'employee1@canotiers.fr')::jsonb, '04cf927d-d5e0-4147-8d84-3b968c07eff6', 'email', NOW(), NOW(), NOW()),
+    (gen_random_uuid(), '471758fa-07ba-47a5-a972-240b7078b7c9', format('{"sub":"%s","email":"%s"}', '471758fa-07ba-47a5-a972-240b7078b7c9', 'employee2@canotiers.fr')::jsonb, '471758fa-07ba-47a5-a972-240b7078b7c9', 'email', NOW(), NOW(), NOW());
 
 -- Seed Profiles
 INSERT INTO public.profiles (id, username, role, hourly_rate_in_cents) VALUES
